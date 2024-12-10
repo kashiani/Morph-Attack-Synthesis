@@ -95,4 +95,19 @@ class VGG16Perceptual(torch.nn.Module):
             torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(4, 14)]),
             torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(14, 21)]),
         ]
+        if not requires_grad:
+            for param in self.parameters():
+                param.requires_grad = False
+
+    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, ...]:
+        """
+        Extracts feature maps from different layers of VGG16.
+
+        Args:
+            x (torch.Tensor): Input tensor of shape [N, C, H, W].
+
+        Returns:
+            tuple[torch.Tensor, ...]: Feature maps from four layers of VGG16.
+        """
+
 
