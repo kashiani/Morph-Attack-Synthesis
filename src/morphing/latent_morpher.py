@@ -64,4 +64,6 @@ def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
         for buf in noise_bufs.values():
             random_noise.append((torch.randn_like(buf).to(device) * 0.7))
 
+        if output_name == "":
+            output_name = l1.split("/")[-1].split(".")[0]
 
