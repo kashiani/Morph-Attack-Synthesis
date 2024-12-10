@@ -60,4 +60,8 @@ def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
 
         noise_bufs = { name: buf for (name, buf) in G.synthesis.named_buffers() if 'noise_const' in name } # dictionary 17 : tensor(4,4), ...  ,tensor(1024,1024)
 
+        random_noise = []
+        for buf in noise_bufs.values():
+            random_noise.append((torch.randn_like(buf).to(device) * 0.7))
+
 
