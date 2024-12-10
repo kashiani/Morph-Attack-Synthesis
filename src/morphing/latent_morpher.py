@@ -52,3 +52,12 @@ def return_min(a1, a2):
             col += 1
         row += 1
     return a3 * 0.5
+
+def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
+
+    with dnnlib.util.open_url(network_pkl) as fp:
+        G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
+
+        noise_bufs = { name: buf for (name, buf) in G.synthesis.named_buffers() if 'noise_const' in name } # dictionary 17 : tensor(4,4), ...  ,tensor(1024,1024)
+
+
