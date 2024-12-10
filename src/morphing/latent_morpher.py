@@ -89,5 +89,10 @@ class VGG16Perceptual(torch.nn.Module):
     def __init__(self, requires_grad: bool = False):
         super().__init__()
         vgg_pretrained_features = models.vgg16(pretrained=True).features
-
+        self.slices = [
+            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2)]),
+            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2, 4)]),
+            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(4, 14)]),
+            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(14, 21)]),
+        ]
 
