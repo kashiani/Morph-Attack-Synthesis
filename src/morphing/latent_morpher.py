@@ -72,4 +72,9 @@ def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
         latent2 = np.load(l2) #(1, 18, 512)
         starting_latent = (latent1 + latent2)/2
 
+        s_l = torch.tensor(starting_latent, dtype=torch.float32, device=device, requires_grad=False).to(device) #torch.Size([1, 18, 512])
 
+        synth_image = G.synthesis(s_l, noise_mode='const')
+        synth_image = (synth_image + 1) * (255/2)
+        synth_image = synth_image.permute(0, 2, 3, 1).clamp(0, 255).to(torch.uint8)[0].cpu().numpy()
+        PIL.Image.fromarray(synth_image, 'RGB').save(output_dir + "/" + output_name + '.png')
