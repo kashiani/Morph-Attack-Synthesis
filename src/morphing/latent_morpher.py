@@ -37,3 +37,18 @@ def return_max(a1, a2):
             col += 1
         row += 1
     return a3
+
+def return_min(a1, a2):
+    a3 = np.zeros(a1.shape)
+    row = 0
+
+    for r1,r2 in zip(a1,a2):
+        col = 0
+        for v1, v2 in zip(r1, r2):
+            if v1 <= v2:
+                a3[row][col] = v1
+            else:
+                a3[row][col] = v2
+            col += 1
+        row += 1
+    return a3 * 0.5
