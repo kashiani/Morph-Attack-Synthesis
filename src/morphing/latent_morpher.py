@@ -67,3 +67,9 @@ def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
         if output_name == "":
             output_name = l1.split("/")[-1].split(".")[0]
 
+        # Load and average latents
+        latent1 = np.load(l1) # (1, 18, 512)
+        latent2 = np.load(l2) #(1, 18, 512)
+        starting_latent = (latent1 + latent2)/2
+
+
