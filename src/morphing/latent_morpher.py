@@ -78,3 +78,12 @@ def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
         synth_image = (synth_image + 1) * (255/2)
         synth_image = synth_image.permute(0, 2, 3, 1).clamp(0, 255).to(torch.uint8)[0].cpu().numpy()
         PIL.Image.fromarray(synth_image, 'RGB').save(output_dir + "/" + output_name + '.png')
+
+
+
+
+class VGG16Perceptual(torch.nn.Module):
+    """
+    Implements a VGG16-based perceptual loss model for feature extraction.
+    """
+
