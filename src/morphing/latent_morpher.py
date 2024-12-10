@@ -109,5 +109,10 @@ class VGG16Perceptual(torch.nn.Module):
         Returns:
             tuple[torch.Tensor, ...]: Feature maps from four layers of VGG16.
         """
-
+        h = x
+        features = []
+        for slice in self.slices:
+            h = slice(h)
+            features.append(h)
+        return tuple(features)
 
