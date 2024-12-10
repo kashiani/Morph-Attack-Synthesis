@@ -86,4 +86,8 @@ class VGG16Perceptual(torch.nn.Module):
     """
     Implements a VGG16-based perceptual loss model for feature extraction.
     """
+    def __init__(self, requires_grad: bool = False):
+        super().__init__()
+        vgg_pretrained_features = models.vgg16(pretrained=True).features
+
 
