@@ -53,10 +53,20 @@ def return_min(a1, a2):
         row += 1
     return a3 * 0.5
 
-def latent_morpher(network_pkl, l1, l2, output_dir, output_name = ""):
+def latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir, output_name = ""):
+    """
+    Performs latent morphing for given coefficients and saves the results.
 
+    Args:
+        network_pkl (str): Path to the StyleGAN model weights.
+        l1 (str): Path to the latent vector of the first image.
+        l2 (str): Path to the latent vector of the second image.
+        morph_coeffs (list): List of morphing coefficients.
+        output_dir (str): Directory to save the morphed images.
+    """
     with dnnlib.util.open_url(network_pkl) as fp:
-        G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
+        G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device)
+
 
         noise_bufs = { name: buf for (name, buf) in G.synthesis.named_buffers() if 'noise_const' in name } # dictionary 17 : tensor(4,4), ...  ,tensor(1024,1024)
 
