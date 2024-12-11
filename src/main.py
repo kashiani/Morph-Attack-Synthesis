@@ -19,51 +19,62 @@ from src.utils.file_utils import make_dir
 
 
 
-
-def process_pair(pair: str, inversion: str, warping: bool, network_pkl: str, num_steps: int, output_dir: str):
+def process_pair(pair: str, method: str, inversion: str, warping: bool, network_pkl: str, num_steps: int, morph_coeffs: list, output_dir: str):
     """
-    Process a pair of images using specified inversion and warping methods.
+    Process a pair of images using the specified synthesis method and inversion/warping methods.
 
     Args:
         pair (str): The pair of image paths separated by '|'.
+        method (str): Morph synthesis method ('StyleGAN', 'OpenCV', 'FaceMorpher').
         inversion (str): Inversion type ('I2S' or 'Landmark').
         warping (bool): Whether to apply warping.
         network_pkl (str): Path to the StyleGAN model weights.
         num_steps (int): Number of optimization steps for inversion.
+        morph_coeffs (list): List of morphing coefficients (e.g., [0.2, 0.5, 0.8]).
         output_dir (str): Directory for output files.
-
-    This function processes a single pair of images by:
-    - Extracting and formatting the image names.
-    - Creating a dedicated subdirectory for the pair.
-    - Running the specified inversion method, optionally with warping.
-    - Saving all intermediate and final outputs in a structured format.
     """
     img1, img2 = pair.strip().split(" | ")
     name1 = os.path.splitext(os.path.basename(img1))[0]
     name2 = os.path.splitext(os.path.basename(img2))[0]
 
     # Create subdirectory for this pair
-    pair_output_dir = os.path.join(output_dir, f"{name1}_{name2}")
+    warping_status = "Warping" if warping else "NoWarping"
+    pair_output_dir = os.path.join(output_dir, f"{method}_{inversion}_{warping_status}_{name1}_{name2}")
     make_dir(pair_output_dir)
 
-    # Ensure necessary subdirectories exist
-    make_dir(os.path.join(pair_output_dir, "embeddings"))
-    make_dir(os.path.join(pair_output_dir, "morphed"))
+    if method == "StyleGAN":
+        # Ensure necessary subdirectories exist for StyleGAN
+        make_dir(os.path.join(pair_output_dir, "embeddings"))
+        make_dir(os.path.join(pair_output_dir, "morphed"))
 
-    if inversion == "I2S" and not warping:
-        i2s(img1, img2, network_pkl, num_steps, pair_output_dir)
-    elif inversion == "I2S" and warping:
-        make_dir(os.path.join(pair_output_dir, "warped"))
-        make_dir(os.path.join(pair_output_dir, "aligned"))
-        make_dir(os.path.join(pair_output_dir, "morphed_masks"))
-        i2s_warping(img1, img2, network_pkl, num_steps, pair_output_dir)
-    elif inversion == "Landmark" and not warping:
-        landmark_inversion(img1, img2, network_pkl, num_steps, pair_output_dir)
-    elif inversion == "Landmark" and warping:
-        make_dir(os.path.join(pair_output_dir, "warped"))
-        make_dir(os.path.join(pair_output_dir, "aligned"))
-        make_dir(os.path.join(pair_output_dir, "morphed_masks"))
-        landmark_inversion_warping(img1, img2, network_pkl, num_steps, pair_output_dir)
+        if inversion == "I2S" and not warping:
+            i2s(img1, img2, network_pkl, num_steps, morph_coeffs, pair_output_dir)
+        elif inversion == "I2S" and warping:
+            make_dir(os.path.join(pair_output_dir, "warped"))
+            make_dir(os.path.join(pair_output_dir, "aligned"))
+            make_dir(os.path.join(pair_output_dir, "morphed_masks"))
+            i2s_warping(img1, img2, network_pkl, num_steps, morph_coeffs, pair_output_dir)
+        elif inversion == "Landmark" and not warping:
+            landmark_inversion(img1, img2, network_pkl, num_steps, morph_coeffs, pair_output_dir)
+        elif inversion == "Landmark" and warping:
+            if len(morph_coeffs) != 1:
+                raise ValueError(
+                    "For 'Landmark' inversion with warping, morph_coeffs must contain exactly one coefficient.")
+
+            make_dir(os.path.join(pair_output_dir, "warped"))
+            make_dir(os.path.join(pair_output_dir, "aligned"))
+            make_dir(os.path.join(pair_output_dir, "morphed_masks"))
+            landmark_inversion_warping(img1, img2, network_pkl, num_steps, morph_coeffs, pair_output_dir)
+    elif method == "OpenCV":
+        print(f"Processing {name1} and {name2} using OpenCV morphing method...")
+        # TODO: Implement OpenCV-based morph synthesis here
+        pass
+    elif method == "FaceMorpher":
+        print(f"Processing {name1} and {name2} using FaceMorpher method...")
+        # TODO: Implement FaceMorpher-based morph synthesis here
+        pass
+    else:
+        raise ValueError(f"Unknown morphing method: {method}")
 
 
 
