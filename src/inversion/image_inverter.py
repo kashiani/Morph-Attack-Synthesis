@@ -1,13 +1,14 @@
 """
-Image2StyleGAN Inversion Methods
+Image2StyleGAN Inversion Method
 """
 import os
-from src.inversion.Image2StyleGAN_Inversion import projection as i2s_projection
-from src.inversion.Image2StyleGAN_Inversion import align_image
+from src.inversion.Image2StyleGAN import projection as i2s_projection
+from src.inversion.Image2StyleGAN import align_image
 
 from src.warping.Warper import get_pasted_masks
 from src.morphing.latent_morpher import latent_morpher
 from src.utils.file_utils import generate_file_path, make_dir
+from ffhq_dataset.landmarks_detector import LandmarksDetector
 
 def i2s(img1: str, img2: str, network_pkl: str, num_steps: int, output_dir: str):
     """
