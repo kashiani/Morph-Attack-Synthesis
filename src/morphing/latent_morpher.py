@@ -68,26 +68,32 @@ def latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir, output_name = 
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device)
 
 
-        noise_bufs = { name: buf for (name, buf) in G.synthesis.named_buffers() if 'noise_const' in name } # dictionary 17 : tensor(4,4), ...  ,tensor(1024,1024)
+    noise_bufs = { name: buf for (name, buf) in G.synthesis.named_buffers() if 'noise_const' in name } # dictionary 17 : tensor(4,4), ...  ,tensor(1024,1024)
 
-        random_noise = []
-        for buf in noise_bufs.values():
-            random_noise.append((torch.randn_like(buf).to(device) * 0.7))
+    random_noise = []
+    for buf in noise_bufs.values():
+        random_noise.append((torch.randn_like(buf).to(device) * 0.7))
 
-        if output_name == "":
-            output_name = l1.split("/")[-1].split(".")[0]
 
-        # Load and average latents
-        latent1 = np.load(l1) # (1, 18, 512)
-        latent2 = np.load(l2) #(1, 18, 512)
-        starting_latent = (latent1 + latent2)/2
+    latent1 = np.load(l1)  # (1, 18, 512)
+    latent2 = np.load(l2)  # (1, 18, 512)
 
-        s_l = torch.tensor(starting_latent, dtype=torch.float32, device=device, requires_grad=False).to(device) #torch.Size([1, 18, 512])
+    for coeff in morph_coeffs:
+        starting_latent = (coeff * latent1 + (1 - coeff) * latent2)
 
+        s_l = torch.tensor(starting_latent, dtype=torch.float32, device=device, requires_grad=False).to(device)
         synth_image = G.synthesis(s_l, noise_mode='const')
-        synth_image = (synth_image + 1) * (255/2)
+        synth_image = (synth_image + 1) * (255 / 2)
         synth_image = synth_image.permute(0, 2, 3, 1).clamp(0, 255).to(torch.uint8)[0].cpu().numpy()
-        PIL.Image.fromarray(synth_image, 'RGB').save(output_dir + "/" + output_name + '.png')
+
+        # Save image with coefficient in the name
+        coeff_str = f"{coeff:.2f}"
+        output_name_full = f"{output_name}_coeff_{coeff_str}.png"
+
+        if len(morph_coeffs) == 1:
+            output_name_full = l1.split("/")[-1].split(".")[0] + '.png'
+
+        PIL.Image.fromarray(synth_image, 'RGB').save(os.path.join(output_dir, output_name_full))
 
 
 
