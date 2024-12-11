@@ -51,7 +51,7 @@ def i2s(img1: str, img2: str, network_pkl: str, num_steps: int, morph_coeffs: li
 
 
 
-def i2s_warping(img1: str, img2: str, network_pkl: str, num_steps: int, output_dir: str):
+def i2s_warping(img1: str, img2: str, network_pkl: str, num_steps: int, morph_coeffs: list, output_dir: str):
     """
     Warps landmarks, performs I2S inversion, and morphs the latents.
 
@@ -60,6 +60,7 @@ def i2s_warping(img1: str, img2: str, network_pkl: str, num_steps: int, output_d
         img2 (str): Path to the second image.
         network_pkl (str): Path to the StyleGAN model weights.
         num_steps (int): Number of optimization steps for inversion.
+        morph_coeffs (list): List of morphing coefficients.
         output_dir (str): Directory for output files.
     """
     aligned_dir = os.path.join(output_dir, "aligned")
@@ -99,7 +100,7 @@ def i2s_warping(img1: str, img2: str, network_pkl: str, num_steps: int, output_d
 
     # Morph Latents
     output_name = f"{os.path.splitext(os.path.basename(img1))[0]}_{os.path.splitext(os.path.basename(img2))[0]}_i2s_with_warping"
-    latent_morpher(network_pkl, l1, l2, morphed_dir, output_name=output_name)
+    latent_morpher(network_pkl, l1, l2, morph_coeffs, morphed_dir, output_name)
 
     return
 
