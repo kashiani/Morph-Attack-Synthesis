@@ -87,11 +87,13 @@ def main():
 
     # Command-line arguments
     parser.add_argument('--list', type=str, default="./examples/morph_pairs.txt", help="Path to the list of morph pairs.")
+    parser.add_argument('--method', type=str, choices=["StyleGAN", "OpenCV", "FaceMorpher"], default="StyleGAN",
+                        help="Morph synthesis method to use.")
     parser.add_argument('--inversion', type=str, choices=["I2S", "Landmark"], default="I2S", help="Inversion method to use.")
-    parser.add_argument('--warping', action='store_true', help="Apply warping to landmarks before inversion.")
-
+    parser.add_argument('--warping', default=True, action='store_true', help="Apply warping to landmarks before inversion.")
     parser.add_argument('--network', type=str, default="./inversion/weights/ffhq.pkl", help="Path to the StyleGAN model weights.")
     parser.add_argument('--num_steps', type=int, default=1000, help="Number of optimization steps for inversion.")
+    parser.add_argument('--morph_coeffs', type=float, nargs='+', default=[.1,.2,.3,.4,.5,.6,.7,.8,.9], help="List of morphing coefficients (e.g., 0.2 0.5 0.8).")
     parser.add_argument('--output_dir', type=str, default="output", help="Directory for all generated data.")
 
     args = parser.parse_args()
@@ -100,16 +102,15 @@ def main():
     warnings.filterwarnings("ignore", message="Failed to build CUDA kernels for upfirdn2d")
     warnings.filterwarnings("ignore", category=UserWarning)
 
-
     # Read morph pairs
     with open(args.list, 'r') as f:
         pairs = f.readlines()
 
-
     # Process each pair with a progress bar
     for pair in tqdm(pairs, desc="Processing morph pairs", unit="pair"):
-        process_pair(pair, args.inversion, args.warping, args.network, args.num_steps, args.output_dir)
+        process_pair(pair, args.method, args.inversion, args.warping, args.network, args.num_steps, args.morph_coeffs, args.output_dir)
 
 
 if __name__ == "__main__":
     main()
+
