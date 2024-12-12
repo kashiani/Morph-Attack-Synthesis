@@ -13,10 +13,9 @@ import os
 import argparse
 from tqdm import tqdm
 import warnings
-from src.inversion.image_inverter import i2s, i2s_warping
-from src.inversion.landmark_inverter import landmark_inversion, landmark_inversion_warping
+from src.inversion import i2s, i2s_warping
+from src.inversion import landmark_inversion, landmark_inversion_warping
 from src.utils.file_utils import make_dir
-
 
 
 def process_pair(pair: str, method: str, inversion: str, warping: bool, network_pkl: str, num_steps: int, morph_coeffs: list, output_dir: str):
@@ -40,6 +39,7 @@ def process_pair(pair: str, method: str, inversion: str, warping: bool, network_
     # Create subdirectory for this pair
     warping_status = "Warping" if warping else "NoWarping"
     pair_output_dir = os.path.join(output_dir, f"{method}_{inversion}_{warping_status}_{name1}_{name2}")
+    print('Processing: ' + pair_output_dir)
     make_dir(pair_output_dir)
 
     if method == "StyleGAN":
@@ -77,8 +77,6 @@ def process_pair(pair: str, method: str, inversion: str, warping: bool, network_
         raise ValueError(f"Unknown morphing method: {method}")
 
 
-
-
 def main():
     """
     Command-line interface for the StyleGAN Morphing project.
@@ -90,10 +88,10 @@ def main():
     parser.add_argument('--method', type=str, choices=["StyleGAN", "OpenCV", "FaceMorpher"], default="StyleGAN",
                         help="Morph synthesis method to use.")
     parser.add_argument('--inversion', type=str, choices=["I2S", "Landmark"], default="I2S", help="Inversion method to use.")
-    parser.add_argument('--warping', default=True, action='store_true', help="Apply warping to landmarks before inversion.")
+    parser.add_argument('--warping', default=False, action='store_true', help="Apply warping to landmarks before inversion.")
     parser.add_argument('--network', type=str, default="./inversion/weights/ffhq.pkl", help="Path to the StyleGAN model weights.")
     parser.add_argument('--num_steps', type=int, default=1000, help="Number of optimization steps for inversion.")
-    parser.add_argument('--morph_coeffs', type=float, nargs='+', default=[.1,.2,.3,.4,.5,.6,.7,.8,.9], help="List of morphing coefficients (e.g., 0.2 0.5 0.8).")
+    parser.add_argument('--morph_coeffs', type=float, nargs='+', default=[.05,.1,.15,.2,.25,.3,.35,.4,.45,.5,.55,.6,.65,.7,.75,.8,.85,.9,.95], help="List of morphing coefficients (e.g., 0.2 0.5 0.8).")
     parser.add_argument('--output_dir', type=str, default="output", help="Directory for all generated data.")
 
     args = parser.parse_args()
