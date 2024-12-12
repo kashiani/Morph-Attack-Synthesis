@@ -18,10 +18,13 @@ def frames_to_gif(input_directory, output_directory, frame_duration):
     project_name = input_directory.parent.name
     output_filename = f"{project_name}_output.gif"
     output_path = output_directory / output_filename
-    
+
     # List all image files in the input directory
     frame_files = sorted(
         [file for file in input_directory.glob('*') if file.suffix.lower() in ['.png', '.jpg', '.jpeg']])
+
+    # Read the frames from files
+    frames = [imageio.imread(file) for file in frame_files]
 
 def main():
     # Set up argument parser
