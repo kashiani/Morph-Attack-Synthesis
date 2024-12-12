@@ -35,7 +35,7 @@ def main():
     parser = argparse.ArgumentParser(description="Convert image frames to GIF.")
     parser.add_argument('--input_directory', type=str, default = '', help="Directory containing image frames.")
     parser.add_argument('--output_path', type=str, default = '', help="Output path for the GIF file.")
-    parser.add_argument('--frame_duration', type=float, default=0.1,
+    parser.add_argument('--frame_duration', type=float, default=0.3,
                         help="Duration each frame is displayed in the GIF, in seconds.")
 
     # Parse arguments
