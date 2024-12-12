@@ -12,7 +12,13 @@ def frames_to_gif(input_directory, output_directory, frame_duration):
     # Ensure the output directory exists; if not, create it
     output_directory = Path(output_directory)
     output_directory.mkdir(parents=True, exist_ok=True)
-    
+
+    # Extract the specific part of the path for the output filename
+    # Assuming the desired part is always one level up from the input directory
+    project_name = input_directory.parent.name
+    output_filename = f"{project_name}_output.gif"
+    output_path = output_directory / output_filename
+
 
 def main():
     # Set up argument parser
