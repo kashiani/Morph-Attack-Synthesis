@@ -10,6 +10,7 @@ def frames_to_gif(input_directory, output_directory, frame_duration):
         raise ValueError(f"The input directory {input_directory} does not exist or is not a directory.")
 
 
+
 def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Convert image frames to GIF.")
