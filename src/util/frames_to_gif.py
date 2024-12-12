@@ -9,7 +9,10 @@ def frames_to_gif(input_directory, output_directory, frame_duration):
     if not input_directory.is_dir():
         raise ValueError(f"The input directory {input_directory} does not exist or is not a directory.")
 
-
+    # Ensure the output directory exists; if not, create it
+    output_directory = Path(output_directory)
+    output_directory.mkdir(parents=True, exist_ok=True)
+    
 
 def main():
     # Set up argument parser
