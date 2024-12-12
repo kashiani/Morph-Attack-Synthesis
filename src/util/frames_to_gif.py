@@ -26,6 +26,10 @@ def frames_to_gif(input_directory, output_directory, frame_duration):
     # Read the frames from files
     frames = [imageio.imread(file) for file in frame_files]
 
+    # Write the frames to a GIF file
+    imageio.mimsave(output_path, frames, 'GIF', duration=frame_duration)
+
+
 def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Convert image frames to GIF.")
