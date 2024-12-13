@@ -172,3 +172,8 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
 
         # Save Aligned Image
         target_pil.save(output_dir + name + '_aligned.png')
+
+        target_uint8 = np.array(target_pil, dtype=np.uint8)
+
+        # Optimize projection.
+        start_time = perf_counter()
