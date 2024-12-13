@@ -65,3 +65,8 @@ def project(
         if verbose:
             print(*args)
 
+    G = copy.deepcopy(G).eval().requires_grad_(False).to(device) # type: ignore
+
+    # light_loss = light_cnn_loss()
+    # Compute w stats.
+    logprint(f'Computing W midpoint and stddev using {w_avg_samples} samples...')
