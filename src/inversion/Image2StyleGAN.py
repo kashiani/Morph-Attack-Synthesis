@@ -237,6 +237,7 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
         )
         print (f'Elapsed: {(perf_counter()-start_time):.1f} s')
 
+
 if __name__ == "__main__":
     run_projection()
 
