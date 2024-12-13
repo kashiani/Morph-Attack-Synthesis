@@ -158,3 +158,7 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
 
     image = input_image
     output_dir = output_dir + "/"
+    with dnnlib.util.open_url(network_pkl) as fp:
+        # Load networks.
+        print('Loading networks from "%s"...' % network_pkl)
+        G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
