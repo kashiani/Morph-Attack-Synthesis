@@ -162,3 +162,13 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
         # Load networks.
         print('Loading networks from "%s"...' % network_pkl)
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
+
+        print('Embedding', image)
+        name = image.split("/")[-1].split(".")[0]
+        target_fname = image
+
+        # Load target image.
+        target_pil = align_image(image, landmark_detector)# .convert('RGB')
+
+        # Save Aligned Image
+        target_pil.save(output_dir + name + '_aligned.png')
