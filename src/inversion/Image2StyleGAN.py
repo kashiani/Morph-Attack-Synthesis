@@ -205,3 +205,11 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
 
     image = input_image
     output_dir = output_dir + "/"
+    with dnnlib.util.open_url(network_pkl) as fp:
+        # Load networks.
+        print('Loading networks from "%s"...' % network_pkl)
+        G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
+
+        print('Embedding', image)
+        name = image.split("/")[-1].split(".")[0]
+
