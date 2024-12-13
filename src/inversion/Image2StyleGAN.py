@@ -82,3 +82,15 @@ def project(
     vgg16 = VGG16_perceptual().to(device)
 
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
+
+    if target_images.shape[2] > 256:
+        target_images = F.interpolate(target_images, size=(256, 256), mode='area')
+
+    # Feature Maps from the 4 different layers of VGG16
+    tf_0, tf_1, tf_2, tf_3 = vgg16(target_images)
+
+    w_opt = torch.tensor(w_avg.repeat(18, axis=1), dtype=torch.float32, device=device, requires_grad=True).to(device) # pylint: disable=not-callable
+    w_out = torch.zeros([0] + list(w_opt.shape[1:]), dtype=torch.float32, device=device)
+
+    # Adam Optimizer
+    optimizer = torch.optim.Adam([w_opt], betas=(0.9, 0.999), lr=initial_learning_rate)
