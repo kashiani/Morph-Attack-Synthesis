@@ -140,3 +140,13 @@ def project(
 
         # Save projected W for each optimization step.
         w_out = w_opt.detach()
+
+    # Save output image and latent code
+    synth_image = G.synthesis(w_out, noise_mode='const')
+    synth_image = (synth_image + 1) * (255/2)
+    synth_image = synth_image.permute(0, 2, 3, 1).clamp(0, 255).to(torch.uint8)[0].cpu().numpy()
+    PIL.Image.fromarray(synth_image, 'RGB').save(output + '.png')
+
+    np.save(output + '.npy', w_out.cpu().numpy())
+
+    return
