@@ -150,3 +150,11 @@ def project(
     np.save(output + '.npy', w_out.cpu().numpy())
 
     return
+
+# Project Funtion
+def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    image = input_image
+    output_dir = output_dir + "/"
