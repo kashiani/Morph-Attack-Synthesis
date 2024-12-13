@@ -94,3 +94,13 @@ def project(
 
     # Adam Optimizer
     optimizer = torch.optim.Adam([w_opt], betas=(0.9, 0.999), lr=initial_learning_rate)
+
+    pixelwise_loss = torch.nn.L1Loss()
+
+    mse = torch.nn.MSELoss()
+
+    original_image = target.unsqueeze(0).to(device).to(torch.float32)
+
+    # Init noise.
+    for buf in noise_bufs.values():
+        buf[:] = torch.randn_like(buf)
