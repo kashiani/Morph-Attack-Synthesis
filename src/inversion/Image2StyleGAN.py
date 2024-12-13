@@ -212,4 +212,8 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
 
         print('Embedding', image)
         name = image.split("/")[-1].split(".")[0]
+        target_fname = image
+
+        # Load target image.
+        target_pil = align_image(image)# .convert('RGB')
 
