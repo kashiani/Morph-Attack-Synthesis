@@ -188,3 +188,20 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
             output = output_dir + name
         )
         print (f'Elapsed: {(perf_counter()-start_time):.1f} s')
+
+#----------------------------------------------------------------------------
+
+@click.command()
+@click.option('--network', 'network_pkl', default='weights/ffhq.pkl', help='Network pickle filename')
+@click.option('--num-steps',              help='Number of optimization steps', type=int, default=1000, show_default=True)
+@click.option('--seed',                   help='Random seed', type=int, default=303, show_default=True)
+@click.option('--input_image',            help='Image to Invert', type=str, default="input/04203d523.jpg")
+@click.option('--output_dir',             help='Output Folder for Latent and Reconstructed Image', type=str, default="output")
+
+def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str, output_dir: str):
+
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    image = input_image
+    output_dir = output_dir + "/"
