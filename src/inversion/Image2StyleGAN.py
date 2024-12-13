@@ -215,7 +215,7 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
         target_fname = image
 
         # Load target image.
-        target_pil = align_image(image)# .convert('RGB')
+        target_pil = align_image(image)
 
         # Save Aligned Image
         target_pil.save(output_dir + name + '_aligned.png')
