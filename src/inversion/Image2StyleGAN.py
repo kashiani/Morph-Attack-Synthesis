@@ -235,4 +235,6 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
             vgg_weights='weights/vgg16.pt',
             output = output_dir + name
         )
+        print (f'Elapsed: {(perf_counter()-start_time):.1f} s')
+
 
