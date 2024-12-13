@@ -223,3 +223,16 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
 
         target_uint8 = np.array(target_pil, dtype=np.uint8)
 
+        # Optimize projection.
+        start_time = perf_counter()
+        project(
+            G,
+            target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device), # pylint: disable=not-callable
+            num_steps=num_steps,
+            initial_learning_rate=0.01,
+            device=device,
+            verbose=True,
+            vgg_weights='weights/vgg16.pt',
+            output = output_dir + name
+        )
+
