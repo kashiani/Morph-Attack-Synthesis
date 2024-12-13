@@ -120,3 +120,23 @@ def project(
 
         # Features for synth images.
         sf_0, sf_1, sf_2, sf_3 = vgg16(synth_images)
+        # Perceptual Loss
+        dist = 0
+        dist += mse(tf_0, sf_0)
+        dist += mse(tf_1, sf_1)
+        dist += mse(tf_2, sf_2)
+        dist += mse(tf_3, sf_3)
+
+        # Total Loss
+        loss = dist + pix
+
+        # Step
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+
+        print(f'step {step+1:>4d}/{num_steps}: VGG- {dist:<4.2f} Pixel- {pix:<4.2f} Total- {float(loss):<5.2f}', end="\r")
+        sys.stdout.write("\033[K")
+
+        # Save projected W for each optimization step.
+        w_out = w_opt.detach()
