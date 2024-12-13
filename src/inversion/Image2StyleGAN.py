@@ -217,3 +217,9 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
         # Load target image.
         target_pil = align_image(image)# .convert('RGB')
 
+        # Save Aligned Image
+        target_pil.save(output_dir + name + '_aligned.png')
+
+
+        target_uint8 = np.array(target_pil, dtype=np.uint8)
+
