@@ -104,3 +104,19 @@ def project(
     # Init noise.
     for buf in noise_bufs.values():
         buf[:] = torch.randn_like(buf)
+
+    for step in range(num_steps):
+
+        # Synth images from opt_w.
+        synth_images = G.synthesis(w_opt, noise_mode='const')
+        synth_images = (synth_images + 1) * (255/2)
+
+        # Pixel-wise loss
+        pix = mse(original_image, synth_images)
+
+        # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
+        if synth_images.shape[2] > 256:
+            synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
+
+        # Features for synth images.
+        sf_0, sf_1, sf_2, sf_3 = vgg16(synth_images)
