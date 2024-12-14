@@ -12,7 +12,6 @@ from ffhq_dataset.landmarks_detector import LandmarksDetector
 
 landmark_detector = LandmarksDetector("./inversion/weights/shape_predictor_68_face_landmarks.dat")
 
-
 def landmark_inversion(img1: str, img2: str, network_pkl: str, num_steps: int, morph_coeffs: list, output_dir: str):
 
     """
