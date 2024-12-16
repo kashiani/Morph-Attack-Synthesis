@@ -22,3 +22,31 @@ The **Face Morph Attack Synthesis** project provides a comprehensive framework d
 
 ---
 
+## Project Structure
+
+```plaintext
+Face-Morph-Attack-Synthesis/
+│
+├── src/
+│   ├── inversion/                         # Inversion methods for morphing
+│   │   ├── image_inverter.py              # Image2StyleGAN inversion  +  Warping + I2S inversion
+│   │   ├── landmark_inverter.py           # Landmark-based inversion +  Warping + Landmark-based inversion
+│   │   ├── Image2StyleGAN.py              #  
+│   │   ├── Image2StyleGAN_convex_hull.py  # 
+│   ├── warping/                 # Warping utilities
+│   │   ├── warper.py            # Core warping logic
+│   ├── morphing/                # Morphing methods
+│   │   ├── latent_morpher.py    # Performs latent morphing for given coefficients and saves the results
+│   │   ├── opencv_morph.py      # Morphing using OpenCV 
+│   │   ├── facemorpher.py       # Morphing using FaceMorpher
+│   ├── utils/                   # Utilities
+│   │   ├── file_utils.py        # File management utilities
+│   │   ├── image_utils.py       # Image processing utilities
+│   │   ├── align_image.py       # Image alignment utility
+│   ├── main.py                  # Main entry point for the project
+│
+
+```
+
+---
+
