@@ -1,0 +1,1 @@
+./examples/input/raw/04256d120.jpg | ./examples/input/AdobeStock_497662812.jpeg
