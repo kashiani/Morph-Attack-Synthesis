@@ -45,7 +45,13 @@ Face-Morph-Attack-Synthesis/
 │   │   ├── align_image.py       # Image alignment utility
 │   ├── main.py                  # Main entry point for the project
 │
-
+├── examples/                    # Example inputs and outputs
+│   ├── input_images/            # Input images for morphing
+│   ├── morph_pairs.txt          # Input pairs for morphing
+│
+├── requirements.txt             # Dependencies for the project
+├── README.md                    # Project documentation
+└── LICENSE                      # License for the project
 ```
 
 ---
