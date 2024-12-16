@@ -53,6 +53,6 @@ Face-Morph-Attack-Synthesis/
 ├── README.md                    # Project documentation
 └── LICENSE                      # License for the project
 ```
-
+ 
 ---
 
