@@ -5,9 +5,9 @@ The **Face Morph Attack Synthesis** project provides a comprehensive framework d
 
 
 <p align="center">
-<img src="docs/morph_process.jpg" width="600px"/>
+<img src="docs/morph.gif" width="600px"/>
 <br>
-Face Morphing Attack Detection at Passport Control 
+Face Morphing Attack Generation 
 </p>
 
 
