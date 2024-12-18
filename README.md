@@ -12,7 +12,6 @@ Face Morphing Attack Generation
 </p>
 
 
-
 ---
 
 ## Features
