@@ -121,34 +121,26 @@ output/
 │   ├── morphed/
 ```
 
----
-
-## Example Morph Generation Output
-
-Below is an example of a morph generated using StyleGAN-Based Morphing:
-
-![Morph Output Example](path_to_your_image/morph_example.png)
-
----
-
 ## TODO
-
+- [ ] **Google Colab**:
+  - Add Colab file for Morphing Attack Generation.
 - [ ] **Integrate Evaluation**:
   - Add evaluation pipeline for morph quality and adversarial effectiveness in **Google Colab**.
-- [ ] **Enhance OpenCV Morphing**:
-  - Improve control over blending ratios and masks.
-- [ ] **Extend FaceMorpher**:
-  - Refine integration with facial landmarks for higher fidelity.
+- [ ] **OpenCV Morphing**:
+  - Integrate the OpenCV Morphing Attack Generation.
+- [ ] **FaceMorpher**:
+  - Integrate the FaceMorpher Morphing Attack Generation.
 
----
+
+
 
 ## License
 
-This project is licensed under the terms specified in the LICENSE file. For specific terms regarding StyleGAN, please refer to NVIDIA's license.
+This project is licensed under the terms specified in the LICENSE file. For specific terms regarding StyleGAN2, please refer to [Nvidia Source Code License](https://nvlabs.github.io/stylegan2-ada-pytorch/license.html).
 
 ---
 
 ## Acknowledgments
 
-- StyleGAN and StyleGAN2 by NVIDIA.
+- [StyleGAN2](https://github.com/NVlabs/stylegan2-ada-pytorch) by NVIDIA.
 - Facenet-PyTorch for face alignment and feature extraction.
