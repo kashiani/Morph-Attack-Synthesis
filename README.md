@@ -71,8 +71,10 @@ Face-Morph-Attack-Synthesis/
 ### Prerequisites
 1. Install the required dependencies:
    ```bash
-   pip install -r requirements.txt
+   conda env create -f morph_synthesis.yaml
    ```
+ This command creates a Conda environment with all the dependencies specified in the `morph_synthesis.yaml` file.
+
 2. Download the necessary model weights (for StyleGAN-Based Morphing):
    - **StyleGAN Models**:
      - [FFHQ at 1024x1024 (`ffhq.pkl`)](https://path-to-models/ffhq.pkl)
