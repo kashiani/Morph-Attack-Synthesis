@@ -133,7 +133,7 @@ def make_cache_dir_path(*paths: str) -> str:
     return os.path.join(tempfile.gettempdir(), '.cache', 'dnnlib', *paths)
 
 
-# Small util functions
+# Small utils functions
 # ------------------------------------------------------------------------------------------
 
 
