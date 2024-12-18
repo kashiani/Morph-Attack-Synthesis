@@ -17,7 +17,6 @@
 
 
 import copy
-import os
 import sys
 from time import perf_counter
 import click
@@ -25,9 +24,8 @@ import numpy as np
 import PIL.Image
 import torch
 import torch.nn.functional as F
-import dnnlib
 import legacy
-from src.utils import align_image, read_dir
+from src.utils import align_image
 from src.morphing import VGG16_perceptual
 from ffhq_dataset.landmarks_detector import LandmarksDetector
 
@@ -158,7 +156,7 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
 
     image = input_image
     output_dir = output_dir + "/"
-    with dnnlib.util.open_url(network_pkl) as fp:
+    with src.dnnlib.util.open_url(network_pkl) as fp:
         # Load networks.
         print('Loading networks from "%s"...' % network_pkl)
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
@@ -205,7 +203,7 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
 
     image = input_image
     output_dir = output_dir + "/"
-    with dnnlib.util.open_url(network_pkl) as fp:
+    with src.dnnlib.util.open_url(network_pkl) as fp:
         # Load networks.
         print('Loading networks from "%s"...' % network_pkl)
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore

@@ -3,7 +3,6 @@ import fnmatch
 import numpy as np
 import PIL.Image
 import torch
-import dnnlib
 import legacy
 from torchvision import models
 
@@ -64,7 +63,7 @@ def latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir, output_name = 
         morph_coeffs (list): List of morphing coefficients.
         output_dir (str): Directory to save the morphed images.
     """
-    with dnnlib.util.open_url(network_pkl) as fp:
+    with src.dnnlib.util.open_url(network_pkl) as fp:
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device)
 
 
