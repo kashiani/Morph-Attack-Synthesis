@@ -5,7 +5,7 @@ The **Face Morph Attack Synthesis** project provides a comprehensive framework d
 
 
 <p align="center">
-<img src="docs/morph.gif" width="600px"/>
+<img src="docs/morph.gif" width="900px"/>
 <br>
 Face Morphing Attack Generation 
 </p>
