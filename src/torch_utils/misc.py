@@ -140,6 +140,7 @@ class InfiniteSampler(torch.utils.data.Sampler):
             idx += 1
 
 #----------------------------------------------------------------------------
+
 # Utilities for operating with torch.nn.Module parameters and buffers.
 
 def params_and_buffers(module):
