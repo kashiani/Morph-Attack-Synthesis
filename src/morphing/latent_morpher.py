@@ -112,12 +112,17 @@ class VGG16_perceptual(torch.nn.Module):
             for param in self.parameters():
                 param.requires_grad = False
 
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, ...]:
+    def forward(self, X):
+        h = self.slice1(X)
+        h_relu1_1 = h
 
-        h = x
-        features = []
-        for slice in self.slices:
-            h = slice(h)
-            features.append(h)
-        return tuple(features)
+        h = self.slice2(h)
+        h_relu1_2 = h
 
+        h = self.slice3(h)
+        h_relu3_2 = h
+
+        h = self.slice4(h)
+        h_relu4_2 = h
+
+        return h_relu1_1, h_relu1_2, h_relu3_2, h_relu4_2
