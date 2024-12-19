@@ -95,10 +95,6 @@ def latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir, output_name = 
         PIL.Image.fromarray(synth_image, 'RGB').save(os.path.join(output_dir, output_name_full))
 
 
-import torch
-from torchvision import models
-
-
 class VGG16_perceptual(torch.nn.Module):
     """
     A class that extracts intermediate features from a pretrained VGG16 network for perceptual loss calculations.
@@ -157,5 +153,4 @@ class VGG16_perceptual(torch.nn.Module):
         h_relu4_2 = h
 
         return h_relu1_1, h_relu1_2, h_relu3_2, h_relu4_2
-
 
