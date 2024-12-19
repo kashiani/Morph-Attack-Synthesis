@@ -113,15 +113,7 @@ class VGG16_perceptual(torch.nn.Module):
                 param.requires_grad = False
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, ...]:
-        """
-        Extracts feature maps from different layers of VGG16.
 
-        Args:
-            x (torch.Tensor): Input tensor of shape [N, C, H, W].
-
-        Returns:
-            tuple[torch.Tensor, ...]: Feature maps from four layers of VGG16.
-        """
         h = x
         features = []
         for slice in self.slices:
