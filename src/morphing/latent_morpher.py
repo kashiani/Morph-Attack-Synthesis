@@ -95,21 +95,19 @@ def latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir, output_name = 
         PIL.Image.fromarray(synth_image, 'RGB').save(os.path.join(output_dir, output_name_full))
 
 
+class VGG16_perceptual(torch.nn.Module):
 
+    def __init__(self, requires_grad=False):
+        super(VGG16_perceptual, self).__init__()
 
-class VGG16Perceptual(torch.nn.Module):
-    """
-    Implements a VGG16-based perceptual loss model for feature extraction.
-    """
-    def __init__(self, requires_grad: bool = False):
-        super().__init__()
         vgg_pretrained_features = models.vgg16(pretrained=True).features
-        self.slices = [
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2)]),
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2, 4)]),
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(4, 14)]),
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(14, 21)]),
-        ]
+
+        self.slice1 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2)])
+        self.slice2 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2, 4)])
+        self.slice3 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(4, 14)])
+        self.slice4 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(14, 21)])
+
+        # Freeze parameters if gradient computation is not required
         if not requires_grad:
             for param in self.parameters():
                 param.requires_grad = False
