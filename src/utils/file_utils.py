@@ -1,7 +1,23 @@
-
-
 import os
+import fnmatch
+from typing import List
+def read_dir(directory: str, formats: List[str]) -> List[str]:
+    """
+    Reads a directory and returns a list of image file paths matching specified formats.
 
+    Args:
+        directory (str): The directory to scan.
+        formats (list[str]): List of acceptable file formats (e.g., ['*.jpg', '*.png']).
+
+    Returns:
+        list[str]: List of paths to matching image files.
+    """
+    images = []
+    for root, _, files in os.walk(directory):
+        for name in files:
+            if any(fnmatch.fnmatch(name, fmt) for fmt in formats):
+                images.append(os.path.join(root, name))
+    return images
 
 
 def ensure_dir_exists(path):
