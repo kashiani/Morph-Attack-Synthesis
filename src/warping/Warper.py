@@ -29,3 +29,10 @@ def load_image_points(path, size):
     return None, None
   else:
     return aligner.resize_align(img, points, size)
+
+def load_valid_image_points(imgpaths, size):
+  for path in imgpaths:
+    img, points = load_image_points(path, size)
+    if img is not None:
+      print(path)
+      yield (img, points)
