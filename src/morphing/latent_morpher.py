@@ -95,39 +95,67 @@ def latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir, output_name = 
         PIL.Image.fromarray(synth_image, 'RGB').save(os.path.join(output_dir, output_name_full))
 
 
+import torch
+from torchvision import models
 
 
-class VGG16Perceptual(torch.nn.Module):
+class VGG16_perceptual(torch.nn.Module):
     """
-    Implements a VGG16-based perceptual loss model for feature extraction.
+    A class that extracts intermediate features from a pretrained VGG16 network for perceptual loss calculations.
+
+    Attributes:
+        slice1 (torch.nn.Sequential): Layers 0-1 of the VGG16 features.
+        slice2 (torch.nn.Sequential): Layers 2-3 of the VGG16 features.
+        slice3 (torch.nn.Sequential): Layers 4-13 of the VGG16 features.
+        slice4 (torch.nn.Sequential): Layers 14-20 of the VGG16 features.
+
+    Args:
+        requires_grad (bool): If False, disables gradient computation for all layers (default: False).
     """
-    def __init__(self, requires_grad: bool = False):
-        super().__init__()
+
+    def __init__(self, requires_grad=False):
+        super(VGG16_perceptual, self).__init__()
+
+        # Load the pretrained VGG16 model's features
         vgg_pretrained_features = models.vgg16(pretrained=True).features
-        self.slices = [
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2)]),
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2, 4)]),
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(4, 14)]),
-            torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(14, 21)]),
-        ]
+
+        # Define slices corresponding to specific layers
+        self.slice1 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2)])
+        self.slice2 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(2, 4)])
+        self.slice3 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(4, 14)])
+        self.slice4 = torch.nn.Sequential(*[vgg_pretrained_features[x] for x in range(14, 21)])
+
+        # Freeze parameters if gradient computation is not required
         if not requires_grad:
             for param in self.parameters():
                 param.requires_grad = False
 
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, ...]:
+    def forward(self, X):
         """
-        Extracts feature maps from different layers of VGG16.
+        Passes the input through the selected VGG16 layers and returns intermediate features.
 
         Args:
-            x (torch.Tensor): Input tensor of shape [N, C, H, W].
+            X (torch.Tensor): Input tensor of shape (N, C, H, W).
 
         Returns:
-            tuple[torch.Tensor, ...]: Feature maps from four layers of VGG16.
+            tuple: Contains intermediate activations from the following layers:
+                - h_relu1_1: Output after slice1 (layers 0-1).
+                - h_relu1_2: Output after slice2 (layers 2-3).
+                - h_relu3_2: Output after slice3 (layers 4-13).
+                - h_relu4_2: Output after slice4 (layers 14-20).
         """
-        h = x
-        features = []
-        for slice in self.slices:
-            h = slice(h)
-            features.append(h)
-        return tuple(features)
+        h = self.slice1(X)
+        h_relu1_1 = h
+
+        h = self.slice2(h)
+        h_relu1_2 = h
+
+        h = self.slice3(h)
+        h_relu3_2 = h
+
+        h = self.slice4(h)
+        h_relu4_2 = h
+
+        return h_relu1_1, h_relu1_2, h_relu3_2, h_relu4_2
+
 
