@@ -36,3 +36,14 @@ def load_valid_image_points(imgpaths, size):
     if img is not None:
       print(path)
       yield (img, points)
+
+def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
+  if images_folder is None:
+    yield src_image
+    yield dest_image
+  else:
+    for fname in os.listdir(images_folder):
+      if (fname.lower().endswith('.jpg') or
+         fname.lower().endswith('.png') or
+         fname.lower().endswith('.jpeg')):
+        yield os.path.join(images_folder, fname)
