@@ -47,6 +47,3 @@ def list_imgpaths(images_folder=None, src_image=None, dest_image=None):
          fname.lower().endswith('.png') or
          fname.lower().endswith('.jpeg')):
         yield os.path.join(images_folder, fname)
-
-
-
