@@ -36,3 +36,50 @@ def roi_coordinates(rect, size, scale):
   roi_x, border_x = positive_cap(roi_x)
   roi_y, border_y = positive_cap(roi_y)
   return roi_x, roi_y, border_x, border_y
+
+def scaling_factor(rect, size):
+    """
+    Calculate the scaling factor for resizing an image to new dimensions.
+
+    The function determines the scaling factor based on the bounding rectangle
+    dimensions of a face and the desired size. It ensures the new dimensions
+    maintain a consistent aspect ratio with a reduction factor of 80%.
+
+    :param rect: tuple (x, y, w, h)
+        Bounding rectangle of the face, where:
+        - x, y: Coordinates of the top-left corner (ignored in the calculation).
+        - w: Width of the bounding rectangle.
+        - h: Height of the bounding rectangle.
+
+    :param size: tuple (width, height)
+        Desired dimensions of the output image:
+        - width: Target width.
+        - height: Target height.
+
+    :returns: float
+        Scaling factor as a floating-point number.
+    """
+    # Unpack desired dimensions
+    new_height, new_width = size
+
+    # Extract the width and height from the bounding rectangle
+    rect_h, rect_w = rect[2:]
+
+    # Calculate the height and width scaling ratios
+    height_ratio = rect_h / new_height
+    width_ratio = rect_w / new_width
+
+    # Initialize scaling factor
+    scale = 1
+
+    # Determine scaling based on the dominant ratio
+    if height_ratio > width_ratio:
+        # Height is the limiting dimension
+        new_rect_h = 0.8 * new_height  # Reduced target height by 80%
+        scale = new_rect_h / rect_h
+    else:
+        # Width is the limiting dimension
+        new_rect_w = 0.8 * new_width  # Reduced target width by 80%
+        scale = new_rect_w / rect_w
+
+    return 1
