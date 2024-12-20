@@ -86,3 +86,29 @@ def face_points(img, size, add_boundary_points=True):
         Array of face points with or without additional boundary points, depending on the value of `add_boundary_points`.
     """
     return face_points_dlib(img, size, add_boundary_points)
+
+def face_points_dlib(img, size, add_boundary_points=True):
+    """
+    Locate 68 facial landmarks in an image using Dlib's shape predictor.
+
+    This function uses the Dlib library to detect facial landmarks and optionally
+    adds additional boundary points to enhance the detected points. Ensure the
+    required shape predictor model file is downloaded and available at the specified path.
+
+    :param img: numpy.ndarray
+        Input image array in BGR format.
+
+    :param size: tuple (height, width)
+        Desired output size to add corner points at the boundaries.
+
+    :param add_boundary_points: bool, optional (default=True)
+        If True, additional boundary points are added beyond the detected landmarks.
+
+    :returns: numpy.ndarray
+        Array of (x, y) coordinates of the detected facial landmarks and boundary points.
+        Returns an empty array if no face is found.
+
+    :raises: Exception
+        Prints the exception message and returns an empty array in case of an error.
+    """
+
