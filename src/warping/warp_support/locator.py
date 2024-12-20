@@ -65,3 +65,24 @@ def boundary_points(points, width_percent=0.1, height_percent=0.1):
     # Generate the two new boundary points at the adjusted top corners
     return [[x + spacerw, y + spacerh],
             [x + w - spacerw, y + spacerh]]
+
+def face_points(img, size, add_boundary_points=True):
+    """
+    Wrapper function to detect face points in an image using Dlib.
+
+    This function delegates the task of face point detection to `face_points_dlib`.
+    Optionally, boundary points can be added to the detected points.
+
+    :param img: numpy.ndarray
+        Input image in which face points need to be detected.
+
+    :param size: tuple (height, width)
+        Desired output size for the detected face points.
+
+    :param add_boundary_points: bool, optional (default=True)
+        If True, additional boundary points are added to the detected face points.
+
+    :returns: numpy.ndarray
+        Array of face points with or without additional boundary points, depending on the value of `add_boundary_points`.
+    """
+    return face_points_dlib(img, size, add_boundary_points)
