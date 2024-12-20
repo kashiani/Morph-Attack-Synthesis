@@ -14,3 +14,17 @@ DATA_DIR = os.environ.get(
 )
 
 
+# Initialize Dlib's face detector
+# This uses a pre-trained frontal face detector from Dlib's library
+dlib_detector = dlib.get_frontal_face_detector()
+
+# Initialize Dlib's facial landmark predictor
+# Replace the path below with the path to your 68-face-landmarks model file
+# Ensure the file exists at the specified location
+shape_predictor_path = "../inversion/weights/shape_predictor_68_face_landmarks.dat"
+dlib_predictor = dlib.shape_predictor(shape_predictor_path)
+
+# Notes:
+# - `dlib.get_frontal_face_detector()` provides a fast and accurate face detector.
+# - `dlib.shape_predictor()` initializes the predictor for detecting 68 face landmarks.
+# - Ensure that the `shape_predictor_68_face_landmarks.dat` file is downloaded and accessible.
