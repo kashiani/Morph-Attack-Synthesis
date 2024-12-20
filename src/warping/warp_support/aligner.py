@@ -83,3 +83,32 @@ def scaling_factor(rect, size):
         scale = new_rect_w / rect_w
 
     return 1
+
+
+def resize_image(img, scale):
+    """
+    Resize an image using the specified scaling factor.
+
+    This function adjusts the dimensions of the input image proportionally
+    by multiplying its width and height by the given scaling factor.
+
+    :param img: numpy.ndarray
+        Input image to be resized. It should be a valid image array with dimensions
+        (height, width, channels) or (height, width).
+
+    :param scale: float
+        Scaling factor to resize the image. Values greater than 1 enlarge the image,
+        while values between 0 and 1 shrink it.
+
+    :returns: numpy.ndarray
+        The resized image with adjusted dimensions based on the scaling factor.
+    """
+    # Retrieve the current dimensions of the image
+    cur_height, cur_width = img.shape[:2]
+
+    # Calculate new dimensions based on the scaling factor
+    new_scaled_height = int(scale * cur_height)
+    new_scaled_width = int(scale * cur_width)
+
+    # Resize the image using OpenCV's resize function
+    return cv2.resize(img, (new_scaled_width, new_scaled_height))
