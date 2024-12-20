@@ -137,4 +137,17 @@ def resize_align(img, points, size):
         - Adjusted points array of the same shape as the input points.
     """
 
+    # Unpack desired dimensions
+    new_height, new_width = size
+
+    # Compute bounding rectangle for the points
+    rect = cv2.boundingRect(np.array([points], np.int32))
+
+    # Calculate scaling factor based on the bounding rectangle and desired size
+    scale = scaling_factor(rect, size)
+
+    # Resize the image using the calculated scaling factor
+    img = resize_image(img, scale)
+
+
 
