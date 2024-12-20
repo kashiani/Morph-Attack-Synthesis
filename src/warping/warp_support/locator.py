@@ -28,3 +28,40 @@ dlib_predictor = dlib.shape_predictor(shape_predictor_path)
 # - `dlib.get_frontal_face_detector()` provides a fast and accurate face detector.
 # - `dlib.shape_predictor()` initializes the predictor for detecting 68 face landmarks.
 # - Ensure that the `shape_predictor_68_face_landmarks.dat` file is downloaded and accessible.
+
+
+def boundary_points(points, width_percent=0.1, height_percent=0.1):
+    """
+    Generate additional boundary points at the top corners of a bounding rectangle.
+
+    This function calculates two additional points located at the top corners of
+    a bounding rectangle surrounding the provided points. The new points can be
+    adjusted inward or outward based on the width and height percentages.
+
+    :param points: numpy.ndarray
+        An *m* x 2 array of (x, y) points representing the key points of an object.
+
+    :param width_percent: float, optional (default=0.1)
+        Percentage of the width used to taper the points inward or outward.
+        - Values should be in the range [-1, 1].
+        - Positive values move the points inward, negative values move them outward.
+
+    :param height_percent: float, optional (default=0.1)
+        Percentage of the height used to taper the points upward or downward.
+        - Values should be in the range [-1, 1].
+        - Positive values move the points downward, negative values move them upward.
+
+    :returns: list
+        A list of two new points represented as [[x1, y1], [x2, y2]].
+        These points are located at the adjusted top corners of the bounding rectangle.
+    """
+    # Calculate the bounding rectangle for the input points
+    x, y, w, h = cv2.boundingRect(np.array([points], np.int32))
+
+    # Calculate the offset distances for width and height adjustments
+    spacerw = int(w * width_percent)
+    spacerh = int(h * height_percent)
+
+    # Generate the two new boundary points at the adjusted top corners
+    return [[x + spacerw, y + spacerh],
+            [x + w - spacerw, y + spacerh]]
