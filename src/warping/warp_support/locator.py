@@ -112,3 +112,38 @@ def face_points_dlib(img, size, add_boundary_points=True):
         Prints the exception message and returns an empty array in case of an error.
     """
 
+    try:
+        points = []
+
+        # Convert the image to RGB as required by Dlib
+        rgbimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        # Detect faces in the image
+        rects = dlib_detector(rgbimg, 1)
+
+        if rects and len(rects) > 0:
+            # Use the first detected face
+            shapes = dlib_predictor(rgbimg, rects[0])
+            points = np.array([(shapes.part(i).x, shapes.part(i).y) for i in range(68)], np.int32)
+
+            if add_boundary_points:
+                # Add additional boundary points beyond the 68 detected points
+                points = np.vstack([
+                    points,
+                    boundary_points(points, 0.1, -0.03),
+                    boundary_points(points, 0.13, -0.05),
+                    boundary_points(points, 0.15, -0.08),
+                    boundary_points(points, 0.33, -0.12)
+                ])
+
+        # Add corner points of the image based on the provided size
+        points = np.vstack([
+            points,
+            [[1, 1], [size[1] - 2, 1], [1, size[0] - 2], [size[1] - 2, size[0] - 2]]
+        ])
+
+        return points
+    except Exception as e:
+        # Print the exception and return an empty array
+        print(e)
+        return []
