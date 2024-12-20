@@ -167,3 +167,4 @@ def resize_align(img, points, size):
 
     return crop, points
 
+
