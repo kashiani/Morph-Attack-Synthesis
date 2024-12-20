@@ -155,5 +155,15 @@ def resize_align(img, points, size):
     roi_h = np.min([new_height - border_y, cur_height - roi_y])
     roi_w = np.min([new_width - border_x, cur_width - roi_x])
 
+    # Crop the image to the desired size
+    crop = np.zeros((new_height, new_width, 3), img.dtype)
+    crop[border_y:border_y + roi_h, border_x:border_x + roi_w] = (
+        img[roi_y:roi_y + roi_h, roi_x:roi_x + roi_w]
+    )
 
+    # Adjust the facial points to match the scaled and cropped image
+    points[:, 0] = (points[:, 0] * scale) + (border_x - roi_x)
+    points[:, 1] = (points[:, 1] * scale) + (border_y - roi_y)
+
+    return crop, points
 
