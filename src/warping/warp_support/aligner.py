@@ -112,3 +112,29 @@ def resize_image(img, scale):
 
     # Resize the image using OpenCV's resize function
     return cv2.resize(img, (new_scaled_width, new_scaled_height))
+
+def resize_align(img, points, size):
+    """
+    Resize an image and associated points, align the face to the center,
+    and crop it to the desired size.
+
+    This function resizes the input image based on a bounding rectangle,
+    aligns the face to the center of the output, and adjusts the points
+    accordingly to maintain alignment with the transformed image.
+
+    :param img: numpy.ndarray
+        Input image to be resized. Expected to be a valid image array.
+
+    :param points: numpy.ndarray
+        Array of shape (*m* x 2), representing *m* facial landmarks or key points
+        with (x, y) coordinates.
+
+    :param size: tuple (height, width)
+        Desired output size of the image after resizing and cropping.
+
+    :returns: tuple (numpy.ndarray, numpy.ndarray)
+        - Resized and cropped image as a numpy array with the specified dimensions.
+        - Adjusted points array of the same shape as the input points.
+    """
+
+
