@@ -136,7 +136,6 @@ def resize_align(img, points, size):
         - Resized and cropped image as a numpy array with the specified dimensions.
         - Adjusted points array of the same shape as the input points.
     """
-
     # Unpack desired dimensions
     new_height, new_width = size
 
