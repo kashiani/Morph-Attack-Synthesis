@@ -149,5 +149,11 @@ def resize_align(img, points, size):
     # Resize the image using the calculated scaling factor
     img = resize_image(img, scale)
 
+    # Align the bounding rectangle to the center of the image
+    cur_height, cur_width = img.shape[:2]
+    roi_x, roi_y, border_x, border_y = roi_coordinates(rect, size, scale)
+    roi_h = np.min([new_height - border_y, cur_height - roi_y])
+    roi_w = np.min([new_width - border_x, cur_width - roi_x])
+
 
 
