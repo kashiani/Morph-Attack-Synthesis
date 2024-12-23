@@ -47,3 +47,30 @@ def check_do_save(func):
         if self.do_save:
             func(self, *args, **kwargs)
     return inner
+
+class Plotter:
+    """
+    A class for plotting and saving images with additional utility functions.
+
+    :param plot: bool, optional (default=True)
+        Enable or disable plotting functionality.
+
+    :param rows: int, optional (default=0)
+        Number of rows in the plot layout. Calculated automatically if zero.
+
+    :param cols: int, optional (default=0)
+        Number of columns in the plot layout. Calculated automatically if zero.
+
+    :param num_images: int, optional (default=0)
+        Total number of images to plot. Used for automatic layout calculation.
+
+    :param out_folder: str, optional (default=None)
+        Folder path for saving images.
+
+    :param out_filename: str, optional (default=None)
+        Default filename for saving images.
+    """
+    def __init__(self, plot=True, rows=0, cols=0, num_images=0, out_folder=None, out_filename=None):
+        self.save_counter = 1
+        self.plot_counter = 1
+        self.do_plot = plot
