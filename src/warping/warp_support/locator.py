@@ -6,6 +6,7 @@ import dlib
 from imutils.face_utils import FaceAligner, rect_to_bb
 import argparse
 import imutils
+import stasm
 
 # Configuration for the location of face landmark model data
 DATA_DIR = os.environ.get(
@@ -147,3 +148,140 @@ def face_points_dlib(img, size, add_boundary_points=True):
         # Print the exception and return an empty array
         print(e)
         return []
+
+def face_points_stasm(img, add_boundary_points=True):
+    """
+    Locate 77 facial landmarks in an image using the STASM library.
+
+    This function utilizes the STASM library to detect facial landmarks in a grayscale version of the input image.
+    Optionally, additional boundary points can be appended to the detected points.
+
+    :param img: numpy.ndarray
+        Input image array in BGR format.
+
+    :param add_boundary_points: bool, optional (default=True)
+        If True, adds additional boundary points to the detected landmarks.
+
+    :returns: numpy.ndarray
+        Array of (x, y) coordinates representing the 77 detected facial landmarks.
+        Returns an empty array if no face is found or if an error occurs.
+
+    :raises: Exception
+        Prints an error message and returns an empty array if STASM fails to detect landmarks.
+    """
+    import stasm
+
+    try:
+        # Detect facial landmarks using STASM
+        points = stasm.search_single(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
+    except Exception as e:
+        # Handle detection failures
+        print('Failed finding face points: ', e)
+        return []
+
+    # Convert points to integer type
+    points = points.astype(np.int32)
+
+    # Return empty array if no points are found
+    if len(points) == 0:
+        return points
+
+    # Append additional boundary points if requested
+    if add_boundary_points:
+        return np.vstack([points, boundary_points(points)])
+
+    return points
+
+def average_points(point_set):
+    """
+    Compute the average of a set of face points across multiple images.
+
+    This function takes a collection of face point sets and computes their
+    element-wise average to produce a single averaged set of points.
+
+    :param point_set: numpy.ndarray
+        An *n* x *m* x 2 array of face points, where:
+        - *n*: Number of images.
+        - *m*: Number of face points per image.
+        - Each point is represented as (x, y) coordinates.
+
+    :returns: numpy.ndarray
+        An *m* x 2 array of averaged face points as (x, y) integer coordinates.
+    """
+    return np.mean(point_set, axis=0).astype(np.int32)
+
+def weighted_average_points(start_points, end_points, percent=0.5):
+    """
+    Compute the weighted average of two sets of face points.
+
+    This function calculates the weighted average between two corresponding sets of face points
+    based on a specified percentage weight applied to the starting points.
+
+    :param start_points: numpy.ndarray
+        An *m* x 2 array representing the starting face points, where:
+        - *m*: Number of face points.
+        - Each point is represented as (x, y) coordinates.
+
+    :param end_points: numpy.ndarray
+        An *m* x 2 array representing the ending face points, with the same shape as `start_points`.
+
+    :param percent: float, optional (default=0.5)
+        A value between [0, 1] that specifies the weight applied to the `start_points`:
+        - 0: Fully weighted towards `end_points`.
+        - 1: Fully weighted towards `start_points`.
+
+    :returns: numpy.ndarray
+        An *m* x 2 array of weighted average points as (x, y) integer coordinates.
+    """
+    if percent <= 0:
+        return end_points
+    elif percent >= 1:
+        return start_points
+    else:
+        return np.asarray(start_points * percent + end_points * (1 - percent), np.int32)
+
+def align(image, size):
+    """
+    Align a face in an image using Dlib's facial landmark detection and alignment.
+
+    This function detects a face in the input image, aligns it based on the specified
+    size, and returns the aligned face.
+
+    :param image: numpy.ndarray
+        The input image containing a face to be aligned.
+
+    :param size: tuple (height, width)
+        The desired dimensions (height, width) of the aligned face.
+
+    :returns: numpy.ndarray or None
+        The aligned face image with the specified dimensions if a face is detected.
+        Returns None if no face is detected.
+    """
+    # Initialize Dlib's face detector and shape predictor
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor('./inversion/weight/shape_predictor_68_face_landmarks.dat')
+
+    # Create the FaceAligner with the desired alignment parameters
+    fa = FaceAligner(
+        predictor,
+        desiredLeftEye=(0.30, 0.30),
+        desiredFaceWidth=size[1],
+        desiredFaceHeight=size[0]
+    )
+
+    # Convert the input image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Detect faces in the grayscale image
+    rects = detector(gray, 2)
+
+    # Loop over the detected faces
+    for rect in rects:
+        # Align the face based on the detected rectangle
+        face_aligned = fa.align(image, gray, rect)
+        return face_aligned
+
+    # Return None if no face is detected
+    return None
+
+
