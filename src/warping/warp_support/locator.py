@@ -6,6 +6,7 @@ import dlib
 from imutils.face_utils import FaceAligner, rect_to_bb
 import argparse
 import imutils
+import stasm
 
 # Configuration for the location of face landmark model data
 DATA_DIR = os.environ.get(
@@ -147,3 +148,64 @@ def face_points_dlib(img, size, add_boundary_points=True):
         # Print the exception and return an empty array
         print(e)
         return []
+
+def face_points_stasm(img, add_boundary_points=True):
+    """
+    Locate 77 facial landmarks in an image using the STASM library.
+
+    This function utilizes the STASM library to detect facial landmarks in a grayscale version of the input image.
+    Optionally, additional boundary points can be appended to the detected points.
+
+    :param img: numpy.ndarray
+        Input image array in BGR format.
+
+    :param add_boundary_points: bool, optional (default=True)
+        If True, adds additional boundary points to the detected landmarks.
+
+    :returns: numpy.ndarray
+        Array of (x, y) coordinates representing the 77 detected facial landmarks.
+        Returns an empty array if no face is found or if an error occurs.
+
+    :raises: Exception
+        Prints an error message and returns an empty array if STASM fails to detect landmarks.
+    """
+    import stasm
+
+    try:
+        # Detect facial landmarks using STASM
+        points = stasm.search_single(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
+    except Exception as e:
+        # Handle detection failures
+        print('Failed finding face points: ', e)
+        return []
+
+    # Convert points to integer type
+    points = points.astype(np.int32)
+
+    # Return empty array if no points are found
+    if len(points) == 0:
+        return points
+
+    # Append additional boundary points if requested
+    if add_boundary_points:
+        return np.vstack([points, boundary_points(points)])
+
+    return points
+
+def average_points(point_set):
+    """
+    Compute the average of a set of face points across multiple images.
+
+    This function takes a collection of face point sets and computes their
+    element-wise average to produce a single averaged set of points.
+
+    :param point_set: numpy.ndarray
+        An *n* x *m* x 2 array of face points, where:
+        - *n*: Number of images.
+        - *m*: Number of face points per image.
+        - Each point is represented as (x, y) coordinates.
+
+    :returns: numpy.ndarray
+        An *m* x 2 array of averaged face points as (x, y) integer coordinates.
+    """
+    return np.mean(point_set, axis=0).astype(np.int32)
