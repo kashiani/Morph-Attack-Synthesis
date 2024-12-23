@@ -74,3 +74,6 @@ class Plotter:
         self.save_counter = 1
         self.plot_counter = 1
         self.do_plot = plot
+        self.do_save = out_filename is not None
+        self.out_filename = out_filename
+        self.set_filepath(out_folder)
