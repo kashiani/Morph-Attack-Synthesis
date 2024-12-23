@@ -100,3 +100,24 @@ class Plotter:
             os.makedirs(folder)
         self.filepath = os.path.join(folder, 'frame{0:03d}.png')
         self.do_save = True
+
+
+    @check_do_save
+    def save(self, img, filename=None):
+        """
+        Save an image to a file.
+
+        :param img: numpy.ndarray
+            Image to save.
+
+        :param filename: str, optional (default=None)
+            Filename for the saved image. If not provided, the default filepath is used.
+        """
+        if self.filepath:
+            filename = self.filepath.format(self.save_counter)
+            self.save_counter += 1
+        elif filename is None:
+            filename = self.out_filename
+
+        mpimg.imsave(filename, bgr2rgb(img))
+        print(f'{filename} saved')
