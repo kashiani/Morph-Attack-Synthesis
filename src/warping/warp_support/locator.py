@@ -269,7 +269,19 @@ def align(image, size):
         desiredFaceHeight=size[0]
     )
 
+    # Convert the input image to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
+    # Detect faces in the grayscale image
+    rects = detector(gray, 2)
+
+    # Loop over the detected faces
+    for rect in rects:
+        # Align the face based on the detected rectangle
+        face_aligned = fa.align(image, gray, rect)
+        return face_aligned
+
+    # Return None if no face is detected
     return None
 
 
