@@ -144,3 +144,21 @@ class Plotter:
         plt.gcf().subplots_adjust(hspace=0.05, wspace=0, left=0, bottom=0, right=1, top=0.98)
         plt.axis('off')
         plt.savefig('result.png')
+
+    @check_do_plot
+    def plot_mesh(self, points, tri, color='k'):
+        """
+        Plot a mesh using points and triangles.
+
+        :param points: numpy.ndarray
+            Array of (x, y) points representing vertices of the mesh.
+
+        :param tri: scipy.spatial.Delaunay
+            Triangulation object containing the simplices (triangles).
+
+        :param color: str, optional (default='k')
+            Color of the mesh lines.
+        """
+        for tri_indices in tri.simplices:
+            t_ext = [tri_indices[0], tri_indices[1], tri_indices[2], tri_indices[0]]
+            plt.plot(points[t_ext, 0], points[t_ext, 1], color)
