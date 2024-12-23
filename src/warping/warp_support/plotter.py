@@ -96,3 +96,7 @@ class Plotter:
             self.filepath = None
             return
 
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        self.filepath = os.path.join(folder, 'frame{0:03d}.png')
+        self.do_save = True
