@@ -239,3 +239,26 @@ def weighted_average_points(start_points, end_points, percent=0.5):
         return start_points
     else:
         return np.asarray(start_points * percent + end_points * (1 - percent), np.int32)
+
+def align(image, size):
+    """
+    Align a face in an image using Dlib's facial landmark detection and alignment.
+
+    This function detects a face in the input image, aligns it based on the specified
+    size, and returns the aligned face.
+
+    :param image: numpy.ndarray
+        The input image containing a face to be aligned.
+
+    :param size: tuple (height, width)
+        The desired dimensions (height, width) of the aligned face.
+
+    :returns: numpy.ndarray or None
+        The aligned face image with the specified dimensions if a face is detected.
+        Returns None if no face is detected.
+    """
+    # Initialize Dlib's face detector and shape predictor
+    detector = dlib.get_frontal_face_detector()
+    predictor = dlib.shape_predictor('./inversion/weight/shape_predictor_68_face_landmarks.dat')
+
+
