@@ -77,3 +77,10 @@ class Plotter:
         self.do_save = out_filename is not None
         self.out_filename = out_filename
         self.set_filepath(out_folder)
+        if (rows + cols) == 0 and num_images > 0:
+            # Auto-calculate the number of rows and cols for the figure
+            self.rows = int(np.ceil(np.sqrt(num_images / 2.0)))
+            self.cols = int(np.ceil(num_images / self.rows))
+        else:
+            self.rows = rows
+            self.cols = cols
