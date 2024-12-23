@@ -135,3 +135,12 @@ class Plotter:
         p.axes.get_yaxis().set_visible(False)
         plt.imshow(bgr2rgb(img))
         self.plot_counter += 1
+
+    @check_do_plot
+    def show(self):
+        """
+        Display all plotted images in a single figure.
+        """
+        plt.gcf().subplots_adjust(hspace=0.05, wspace=0, left=0, bottom=0, right=1, top=0.98)
+        plt.axis('off')
+        plt.savefig('result.png')
