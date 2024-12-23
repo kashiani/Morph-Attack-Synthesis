@@ -209,3 +209,33 @@ def average_points(point_set):
         An *m* x 2 array of averaged face points as (x, y) integer coordinates.
     """
     return np.mean(point_set, axis=0).astype(np.int32)
+
+def weighted_average_points(start_points, end_points, percent=0.5):
+    """
+    Compute the weighted average of two sets of face points.
+
+    This function calculates the weighted average between two corresponding sets of face points
+    based on a specified percentage weight applied to the starting points.
+
+    :param start_points: numpy.ndarray
+        An *m* x 2 array representing the starting face points, where:
+        - *m*: Number of face points.
+        - Each point is represented as (x, y) coordinates.
+
+    :param end_points: numpy.ndarray
+        An *m* x 2 array representing the ending face points, with the same shape as `start_points`.
+
+    :param percent: float, optional (default=0.5)
+        A value between [0, 1] that specifies the weight applied to the `start_points`:
+        - 0: Fully weighted towards `end_points`.
+        - 1: Fully weighted towards `start_points`.
+
+    :returns: numpy.ndarray
+        An *m* x 2 array of weighted average points as (x, y) integer coordinates.
+    """
+    if percent <= 0:
+        return end_points
+    elif percent >= 1:
+        return start_points
+    else:
+        return np.asarray(start_points * percent + end_points * (1 - percent), np.int32)
