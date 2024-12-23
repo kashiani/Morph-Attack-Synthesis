@@ -121,3 +121,17 @@ class Plotter:
 
         mpimg.imsave(filename, bgr2rgb(img))
         print(f'{filename} saved')
+
+    @check_do_plot
+    def plot_one(self, img):
+        """
+        Plot a single image in the current subplot layout.
+
+        :param img: numpy.ndarray
+            Image to plot.
+        """
+        p = plt.subplot(self.rows, self.cols, self.plot_counter)
+        p.axes.get_xaxis().set_visible(False)
+        p.axes.get_yaxis().set_visible(False)
+        plt.imshow(bgr2rgb(img))
+        self.plot_counter += 1
