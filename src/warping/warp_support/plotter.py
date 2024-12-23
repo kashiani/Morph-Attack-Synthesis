@@ -84,3 +84,15 @@ class Plotter:
         else:
             self.rows = rows
             self.cols = cols
+
+    def set_filepath(self, folder):
+        """
+        Set the filepath for saving images.
+
+        :param folder: str
+            Directory where images will be saved.
+        """
+        if folder is None:
+            self.filepath = None
+            return
+
