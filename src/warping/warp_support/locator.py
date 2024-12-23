@@ -261,4 +261,15 @@ def align(image, size):
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor('./inversion/weight/shape_predictor_68_face_landmarks.dat')
 
+    # Create the FaceAligner with the desired alignment parameters
+    fa = FaceAligner(
+        predictor,
+        desiredLeftEye=(0.30, 0.30),
+        desiredFaceWidth=size[1],
+        desiredFaceHeight=size[0]
+    )
+
+
+    return None
+
 
