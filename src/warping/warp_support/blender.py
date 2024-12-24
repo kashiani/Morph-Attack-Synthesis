@@ -164,3 +164,38 @@ def weighted_average(img1, img2, percent=0.5):
         return img1
     else:
         return cv2.addWeighted(img1, percent, img2, 1 - percent, 0)
+
+
+def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
+    """
+    Blend two images using alpha feathering.
+
+    This function uses a blurred mask to smoothly blend the source image into the destination image.
+
+    :param src_img: numpy.ndarray
+        The source image to blend.
+
+    :param dest_img: numpy.ndarray
+        The destination image onto which the source image is blended.
+
+    :param img_mask: numpy.ndarray
+        A binary mask defining the region of interest for blending. Non-zero values indicate the region to blend.
+
+    :param blur_radius: int, optional (default=15)
+        The radius of the blur applied to the mask for smooth transitions.
+
+    :returns: numpy.ndarray
+        The resulting image after blending.
+    """
+    # Apply blur to the mask for feathering
+    mask = cv2.blur(img_mask, (blur_radius, blur_radius))
+    mask = mask / 255.0
+
+    # Initialize the result image
+    result_img = np.empty(src_img.shape, np.uint8)
+
+    # Blend each channel separately
+    for i in range(3):
+        result_img[..., i] = src_img[..., i] * mask + dest_img[..., i] * (1 - mask)
+
+    return result_img
