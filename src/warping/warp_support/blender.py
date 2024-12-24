@@ -113,4 +113,27 @@ def correct_colours(im1, im2, landmarks1):
     LEFT_EYE_POINTS = list(range(37, 43))
     RIGHT_EYE_POINTS = list(range(43, 49))
 
+    # Calculate the blur amount based on the distance between the eyes
+    blur_amount = COLOUR_CORRECT_BLUR_FRAC * np.linalg.norm(
+        np.mean(landmarks1[LEFT_EYE_POINTS], axis=0) -
+        np.mean(landmarks1[RIGHT_EYE_POINTS], axis=0)
+    )
+    blur_amount = int(blur_amount)
 
+    # Ensure the blur amount is odd
+    if blur_amount % 2 == 0:
+        blur_amount += 1
+
+    # Apply Gaussian blur to both images
+    im1_blur = cv2.GaussianBlur(im1, (blur_amount, blur_amount), 0)
+    im2_blur = cv2.GaussianBlur(im2, (blur_amount, blur_amount), 0)
+
+    # Avoid divide-by-zero errors by adjusting low values in the blurred target image
+    im2_blur = im2_blur.astype(int)
+    im2_blur += 128 * (im2_blur <= 1)
+
+    # Perform the color correction
+    result = im2.astype(np.float64) * im1_blur.astype(np.float64) / im2_blur.astype(np.float64)
+    result = np.clip(result, 0, 255).astype(np.uint8)
+
+    return result
