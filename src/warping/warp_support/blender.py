@@ -137,3 +137,30 @@ def correct_colours(im1, im2, landmarks1):
     result = np.clip(result, 0, 255).astype(np.uint8)
 
     return result
+
+def weighted_average(img1, img2, percent=0.5):
+    """
+    Compute a weighted average of two images.
+
+    This function blends two images together by applying a weighted average based on the specified percentage.
+
+    :param img1: numpy.ndarray
+        The first input image.
+
+    :param img2: numpy.ndarray
+        The second input image. Must have the same dimensions as `img1`.
+
+    :param percent: float, optional (default=0.5)
+        The weight for `img1`. The weight for `img2` is computed as `1 - percent`.
+        - A value of 0 returns `img2` entirely.
+        - A value of 1 returns `img1` entirely.
+
+    :returns: numpy.ndarray
+        The resulting blended image.
+    """
+    if percent <= 0:
+        return img2
+    elif percent >= 1:
+        return img1
+    else:
+        return cv2.addWeighted(img1, percent, img2, 1 - percent, 0)
