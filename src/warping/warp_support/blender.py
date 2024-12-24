@@ -87,3 +87,30 @@ def apply_mask(img, mask):
         masked_img[..., c] = img[..., c] * (mask / 255)
 
     return masked_img
+
+def correct_colours(im1, im2, landmarks1):
+    """
+    Adjust the colors of one image to match another based on facial landmarks.
+
+    This function performs color correction by aligning the color distribution of `im1`
+    to match that of `im2`, using Gaussian blur and a ratio-based correction. The eyes
+    are used as reference points for calculating the blur amount.
+
+    :param im1: numpy.ndarray
+        The source image whose colors need to be corrected.
+
+    :param im2: numpy.ndarray
+        The target image whose color distribution serves as the reference.
+
+    :param landmarks1: numpy.ndarray
+        Facial landmarks for the source image (`im1`). Used to calculate the blur
+        amount based on the distance between the left and right eyes.
+
+    :returns: numpy.ndarray
+        The color-corrected version of the source image (`im1`).
+    """
+    COLOUR_CORRECT_BLUR_FRAC = 0.75
+    LEFT_EYE_POINTS = list(range(37, 43))
+    RIGHT_EYE_POINTS = list(range(43, 49))
+
+
