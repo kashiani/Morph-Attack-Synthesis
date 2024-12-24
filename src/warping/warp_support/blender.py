@@ -58,3 +58,32 @@ def overlay_image(foreground_image, mask, background_image):
     background_image[..., :3][foreground_pixels] = foreground_image[..., :3][foreground_pixels]
 
     return background_image
+
+def apply_mask(img, mask):
+    """
+    Apply a binary mask to the supplied image.
+
+    This function multiplies each channel of the input image by the normalized values
+    of the mask (scaled between 0 and 1) to produce a masked image.
+
+    :param img: numpy.ndarray
+        Input image with a maximum of 3 channels (e.g., RGB or grayscale).
+
+    :param mask: numpy.ndarray
+        A binary mask with values in the range [0, 255]. Non-zero values indicate the
+        regions of the image to retain.
+
+    :returns: numpy.ndarray
+        The resulting image with the mask applied.
+    """
+    # Create a copy of the input image to preserve the original
+    masked_img = np.copy(img)
+
+    # Determine the number of channels to process
+    num_channels = min(3, img.shape[-1]) if img.ndim == 3 else 1
+
+    # Apply the mask to each channel
+    for c in range(num_channels):
+        masked_img[..., c] = img[..., c] * (mask / 255)
+
+    return masked_img
