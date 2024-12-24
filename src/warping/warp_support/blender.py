@@ -199,3 +199,4 @@ def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
         result_img[..., i] = src_img[..., i] * mask + dest_img[..., i] * (1 - mask)
 
     return result_img
+
