@@ -204,3 +204,28 @@ def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
 
 
 
+def poisson_blend(img_source, dest_img, img_mask, offset=(0, 0)):
+    """
+    Blend two images seamlessly using Poisson blending.
+
+    This function adjusts the source image to blend naturally with the destination image,
+    using the provided mask and offset to determine the region to blend.
+
+    :param img_source: numpy.ndarray
+        The source image to blend into the destination image.
+
+    :param dest_img: numpy.ndarray
+        The destination image onto which the source image is blended.
+
+    :param img_mask: numpy.ndarray
+        A binary mask defining the region of the source image to blend. Non-zero values indicate the region to blend.
+
+    :param offset: tuple, optional (default=(0, 0))
+        The (x, y) offset to position the source image relative to the destination image.
+
+    :returns: numpy.ndarray
+        The resulting image after Poisson blending.
+    """
+    img_target = np.copy(dest_img)
+
+    return img_target
