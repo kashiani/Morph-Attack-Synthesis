@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import scipy.sparse
 
+import pyamg
+
 
 def mask_from_points(size, points, iter=1, radius=40):
     """
@@ -199,4 +201,5 @@ def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
         result_img[..., i] = src_img[..., i] * mask + dest_img[..., i] * (1 - mask)
 
     return result_img
+
 
