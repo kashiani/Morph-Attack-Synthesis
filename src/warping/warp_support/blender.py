@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import scipy.sparse
 
+import pyamg
+
 
 def mask_from_points(size, points, iter=1, radius=40):
     """
@@ -200,3 +202,96 @@ def alpha_feathering(src_img, dest_img, img_mask, blur_radius=15):
 
     return result_img
 
+
+
+def poisson_blend(img_source, dest_img, img_mask, offset=(0, 0)):
+    """
+    Blend two images seamlessly using Poisson blending.
+
+    This function adjusts the source image to blend naturally with the destination image,
+    using the provided mask and offset to determine the region to blend.
+
+    :param img_source: numpy.ndarray
+        The source image to blend into the destination image.
+
+    :param dest_img: numpy.ndarray
+        The destination image onto which the source image is blended.
+
+    :param img_mask: numpy.ndarray
+        A binary mask defining the region of the source image to blend. Non-zero values indicate the region to blend.
+
+    :param offset: tuple, optional (default=(0, 0))
+        The (x, y) offset to position the source image relative to the destination image.
+
+    :returns: numpy.ndarray
+        The resulting image after Poisson blending.
+    """
+
+    # Compute regions to be blended
+    region_source = (
+        max(-offset[0], 0),
+        max(-offset[1], 0),
+        min(img_target.shape[0] - offset[0], img_source.shape[0]),
+        min(img_target.shape[1] - offset[1], img_source.shape[1]))
+    region_target = (
+        max(offset[0], 0),
+        max(offset[1], 0),
+        min(img_target.shape[0], img_source.shape[0] + offset[0]),
+        min(img_target.shape[1], img_source.shape[1] + offset[1]))
+    region_size = (region_source[2] - region_source[0],
+                   region_source[3] - region_source[1])
+
+    # Clip and normalize mask image
+    img_mask = img_mask[region_source[0]:region_source[2],
+                        region_source[1]:region_source[3]]
+
+    # Create coefficient matrix
+    coff_mat = scipy.sparse.identity(np.prod(region_size), format='lil')
+    for y in range(region_size[0]):
+        for x in range(region_size[1]):
+            if img_mask[y, x]:
+                index = x + y * region_size[1]
+                coff_mat[index, index] = 4
+                if index + 1 < np.prod(region_size):
+                    coff_mat[index, index + 1] = -1
+                if index - 1 >= 0:
+                    coff_mat[index, index - 1] = -1
+                if index + region_size[1] < np.prod(region_size):
+                    coff_mat[index, index + region_size[1]] = -1
+                if index - region_size[1] >= 0:
+                    coff_mat[index, index - region_size[1]] = -1
+    coff_mat = coff_mat.tocsr()
+
+    # Create Poisson matrix for b
+    poisson_mat = pyamg.gallery.poisson(img_mask.shape)
+
+    # For each layer (ex. RGB)
+    for num_layer in range(img_target.shape[2]):
+        # Get subimages
+        t = img_target[region_target[0]:region_target[2],
+                       region_target[1]:region_target[3], num_layer]
+        s = img_source[region_source[0]:region_source[2],
+                       region_source[1]:region_source[3], num_layer]
+        t = t.flatten()
+        s = s.flatten()
+
+        # Create b
+        b = poisson_mat * s
+        for y in range(region_size[0]):
+            for x in range(region_size[1]):
+                if not img_mask[y, x]:
+                    index = x + y * region_size[1]
+                    b[index] = t[index]
+
+        # Solve Ax = b
+        x = pyamg.solve(coff_mat, b, verb=False, tol=1e-10)
+
+        # Assign x to target image
+        x = np.reshape(x, region_size)
+        x[x > 255] = 255
+        x[x < 0] = 0
+        x = np.array(x, img_target.dtype)
+        img_target[region_target[0]:region_target[2],
+                   region_target[1]:region_target[3], num_layer] = x
+
+    return img_target
