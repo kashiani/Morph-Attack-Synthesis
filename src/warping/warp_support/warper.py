@@ -2,8 +2,6 @@ import numpy as np
 import scipy.spatial as spatial
 
 
-import numpy as np
-
 def bilinear_interpolate(img, coords):
     """
     Perform bilinear interpolation on a given image at specified coordinates.
@@ -170,3 +168,34 @@ def triangular_affine_matrices(vertices, src_points, dest_points):
 
         # Yield the 2x3 affine matrix for the current triangle
         yield mat
+
+
+def warp_image(src_img, src_points, dest_points, dest_shape, dtype=np.uint8):
+    """
+    Warp an image from source landmarks to destination landmarks.
+
+    This function maps the source image to the destination shape by warping it based on
+    the corresponding source and destination points. Delaunay triangulation is used to
+    define the triangular regions for warping.
+
+    :param src_img: numpy.ndarray
+        The source image to be warped. Must have at least 3 channels (RGB).
+
+    :param src_points: numpy.ndarray
+        A 2D array of shape (n, 2), where each row represents [x, y] coordinates of landmarks in the source image.
+
+    :param dest_points: numpy.ndarray
+        A 2D array of shape (n, 2), where each row represents [x, y] coordinates of landmarks in the destination image.
+
+    :param dest_shape: tuple
+        The shape (rows, cols) of the destination image.
+
+    :param dtype: numpy.dtype, optional (default=np.uint8)
+        The data type of the output image.
+
+    :returns: numpy.ndarray
+        The warped image with the specified destination shape and 3 channels.
+    """
+
+
+    return result_img
