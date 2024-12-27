@@ -115,6 +115,24 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
     # Map coordinates to their respective triangles; -1 if outside any triangle
     roi_tri_indices = delaunay.find_simplex(roi_coords)
 
+    # Iterate over each triangle in the Delaunay triangulation
+    for simplex_index in range(len(delaunay.simplices)):
+        # Get coordinates within the current triangle
+        coords = roi_coords[roi_tri_indices == simplex_index]
+        num_coords = len(coords)
 
+        # If there are no coordinates in this triangle, skip
+        if num_coords == 0:
+            continue
+
+        # Transform coordinates using the affine matrix
+        out_coords = np.dot(tri_affines[simplex_index],
+                            np.vstack((coords.T, np.ones(num_coords))))
+
+        # Extract x, y coordinates for destination
+        x, y = coords.T
+
+        # Apply bilinear interpolation from the source image to the result image
+        result_img[y, x] = bilinear_interpolate(src_img, out_coords)
 
     return None
