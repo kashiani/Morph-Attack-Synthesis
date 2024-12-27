@@ -156,3 +156,17 @@ def triangular_affine_matrices(vertices, src_points, dest_points):
     :yields: numpy.ndarray
         A 2x3 affine transformation matrix for each triangle, mapping destination points to source points.
     """
+    # Constant row of ones to append for affine matrix computation
+    ones = [1, 1, 1]
+
+    # Iterate through each triangle defined by the vertex indices
+    for tri_indices in vertices:
+        # Extract the triangle's corner points from the source and destination landmarks
+        src_tri = np.vstack((src_points[tri_indices, :].T, ones))
+        dst_tri = np.vstack((dest_points[tri_indices, :].T, ones))
+
+        # Compute the affine transformation matrix
+        mat = np.dot(src_tri, np.linalg.inv(dst_tri))[:2, :]
+
+        # Yield the 2x3 affine matrix for the current triangle
+        yield mat
