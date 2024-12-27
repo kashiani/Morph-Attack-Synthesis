@@ -136,3 +136,23 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
         result_img[y, x] = bilinear_interpolate(src_img, out_coords)
 
     return None
+
+def triangular_affine_matrices(vertices, src_points, dest_points):
+    """
+    Calculate affine transformation matrices for each triangle defined by vertices.
+
+    This function computes the 2x3 affine transformation matrix for each triangle,
+    mapping points from the destination image to the source image.
+
+    :param vertices: numpy.ndarray
+        An array of triplet indices, where each triplet represents the corners of a triangle.
+
+    :param src_points: numpy.ndarray
+        A 2D array of shape (n, 2), where each row represents [x, y] coordinates of landmarks in the source image.
+
+    :param dest_points: numpy.ndarray
+        A 2D array of shape (n, 2), where each row represents [x, y] coordinates of landmarks in the destination image.
+
+    :yields: numpy.ndarray
+        A 2x3 affine transformation matrix for each triangle, mapping destination points to source points.
+    """
