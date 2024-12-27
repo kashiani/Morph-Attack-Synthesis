@@ -52,3 +52,4 @@ def bilinear_interpolate(img, coords):
 
     # Transpose the result back to original orientation
     return inter_pixel.T
+
