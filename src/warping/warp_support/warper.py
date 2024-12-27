@@ -196,6 +196,24 @@ def warp_image(src_img, src_points, dest_points, dest_shape, dtype=np.uint8):
     :returns: numpy.ndarray
         The warped image with the specified destination shape and 3 channels.
     """
+    # Ensure the resultant image will not have an alpha channel
+    num_chans = 3
 
+    # Remove alpha channel from source image if present
+    src_img = src_img[:, :, :3]
+
+    # Initialize the result image with zeros
+    rows, cols = dest_shape[:2]
+    result_img = np.zeros((rows, cols, num_chans), dtype)
+
+    # Perform Delaunay triangulation on the destination points
+    delaunay = spatial.Delaunay(dest_points)
+
+    # Compute affine transformation matrices for all triangles
+    tri_affines = np.asarray(list(triangular_affine_matrices(
+        delaunay.simplices, src_points, dest_points)))
+
+    # Warp the source image onto the result image using the computed affine matrices
+    process_warp(src_img, result_img, tri_affines, dest_points, delaunay)
 
     return result_img
