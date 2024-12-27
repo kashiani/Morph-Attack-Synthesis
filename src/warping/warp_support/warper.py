@@ -109,6 +109,12 @@ def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
     :returns: None
         The function modifies `result_img` in place by applying the warped triangles.
     """
+    # Generate grid coordinates within the ROI of the destination points
+    roi_coords = grid_coordinates(dst_points)
+
+    # Map coordinates to their respective triangles; -1 if outside any triangle
+    roi_tri_indices = delaunay.find_simplex(roi_coords)
+
 
 
     return None
