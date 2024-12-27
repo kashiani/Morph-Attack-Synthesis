@@ -81,3 +81,34 @@ def grid_coordinates(points):
     )
 
     return grid
+
+import numpy as np
+
+def process_warp(src_img, result_img, tri_affines, dst_points, delaunay):
+    """
+    Warp each triangle from the source image to the destination image within the ROI defined by destination points.
+
+    This function applies affine transformations to warp each triangle of the source image into its corresponding
+    triangle in the destination image. The warping is restricted to the ROI determined by the destination points.
+
+    :param src_img: numpy.ndarray
+        The source image to be warped.
+
+    :param result_img: numpy.ndarray
+        The destination image where the warped triangles will be placed. Should have the same shape as the source image.
+
+    :param tri_affines: list of numpy.ndarray
+        A list of 2x3 affine transformation matrices, one for each triangle.
+
+    :param dst_points: numpy.ndarray
+        A 2D array of shape (n, 2), where each row represents the (x, y) coordinates of the destination points.
+
+    :param delaunay: scipy.spatial.Delaunay
+        A Delaunay triangulation object containing the simplices (triangles) and their connectivity.
+
+    :returns: None
+        The function modifies `result_img` in place by applying the warped triangles.
+    """
+
+
+    return None
