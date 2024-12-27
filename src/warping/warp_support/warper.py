@@ -53,3 +53,31 @@ def bilinear_interpolate(img, coords):
     # Transpose the result back to original orientation
     return inter_pixel.T
 
+
+def grid_coordinates(points):
+    """
+    Generate a grid of x, y coordinates within the region of interest (ROI) defined by the input points.
+
+    This function computes a rectangular grid of coordinates that spans the minimum and maximum x, y values
+    of the supplied points.
+
+    :param points: numpy.ndarray
+        A 2D array of shape (n, 2), where each row represents a point's (x, y) coordinates.
+
+    :returns: numpy.ndarray
+        An array of shape (m, 2) containing (x, y) coordinates for the grid, where:
+        - `m` is the total number of grid points.
+    """
+    # Determine the bounding box of the points
+    xmin = np.min(points[:, 0])
+    xmax = np.max(points[:, 0]) + 1  # Include the endpoint
+    ymin = np.min(points[:, 1])
+    ymax = np.max(points[:, 1]) + 1  # Include the endpoint
+
+    # Generate grid coordinates within the bounding box
+    grid = np.asarray(
+        [(x, y) for y in range(ymin, ymax) for x in range(xmin, xmax)],
+        dtype=np.uint32
+    )
+
+    return grid
