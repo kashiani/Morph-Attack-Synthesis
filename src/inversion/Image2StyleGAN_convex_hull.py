@@ -58,3 +58,24 @@ device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # Instantiate the landmark detector globally
 landmark_detector = LandmarksDetector("./inversion/weights/shape_predictor_68_face_landmarks.dat")
+
+
+def torch_l2(a, b):
+    return (a - b).pow(2).sum().sqrt()
+
+def relativeLandmarkLoss(l1, l2):
+    target_left_eye = ((l1[0][0][0] - l1[0][2][0]).pow(2) + (l1[0][0][1] - l1[0][2][1]).pow(2)).sqrt()
+    target_right_eye = ((l1[0][1][0] - l1[0][2][0]).pow(2) + (l1[0][1][1] - l1[0][2][1]).pow(2)).sqrt()
+    target_left_mouth = ((l1[0][3][0] - l1[0][2][0]).pow(2) + (l1[0][3][1] - l1[0][2][1]).pow(2)).sqrt()
+    target_right_mouth = ((l1[0][4][0] - l1[0][2][0]).pow(2) + (l1[0][4][1] - l1[0][2][1]).pow(2)).sqrt()
+
+    synth_left_eye = ((l2[0][0][0] - l2[0][2][0]).pow(2) + (l2[0][0][1] - l2[0][2][1]).pow(2)).sqrt()
+    synth_right_eye = ((l2[0][1][0] - l2[0][2][0]).pow(2) + (l2[0][1][1] - l2[0][2][1]).pow(2)).sqrt()
+    synth_left_mouth = ((l2[0][3][0] - l2[0][2][0]).pow(2) + (l2[0][3][1] - l2[0][2][1]).pow(2)).sqrt()
+    synth_right_mouth = ((l2[0][4][0] - l2[0][2][0]).pow(2) + (l2[0][4][1] - l2[0][2][1]).pow(2)).sqrt()
+
+    left_eye = torch_l2(target_left_eye, synth_left_eye)
+    right_eye = torch_l2(target_right_eye, synth_right_eye)
+    left_mouth = torch_l2(target_left_mouth, synth_left_mouth)
+    right_mouth = torch_l2(target_right_mouth, synth_right_mouth)
+    return left_eye + right_eye + left_mouth + right_mouth
