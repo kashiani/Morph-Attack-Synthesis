@@ -79,3 +79,68 @@ def relativeLandmarkLoss(l1, l2):
     left_mouth = torch_l2(target_left_mouth, synth_left_mouth)
     right_mouth = torch_l2(target_right_mouth, synth_right_mouth)
     return left_eye + right_eye + left_mouth + right_mouth
+
+
+
+
+def project(
+    G,
+    target: torch.Tensor,  # [C,H,W] and dynamic range [0,255], W & H must match G output resolution
+    *,
+    num_steps=1000,
+    w_avg_samples=10000,
+    initial_learning_rate=0.3,
+    initial_noise_factor=0.05,
+    lr_rampdown_length=0.25,
+    lr_rampup_length=0.05,
+    noise_ramp_length=0.75,
+    euclidean_dist_weight=0.0,
+    pixel_weight=0.01,
+    mtcnn_weight=1,
+    regularize_mag_weight=0.1,
+    dist_weight=1,
+    regularize_noise_weight=1e5,
+    verbose=False,
+    vgg_weights='weights/vgg16.pt',
+    output_name="",
+    device: torch.device
+):
+    """
+    Optimize latent variables in a generative model to approximate a target image.
+
+    Args:
+        G: Pre-trained generative model.
+        target (torch.Tensor): Target image tensor with shape [C, H, W] in range [0, 255].
+        num_steps (int): Number of optimization steps.
+        w_avg_samples (int): Number of samples for computing W midpoint and stddev.
+        initial_learning_rate (float): Initial learning rate for optimization.
+        initial_noise_factor (float): Initial scale of noise added to latent variables.
+        lr_rampdown_length (float): Ramp-down length for learning rate schedule.
+        lr_rampup_length (float): Ramp-up length for learning rate schedule.
+        noise_ramp_length (float): Ramp length for noise scaling.
+        euclidean_dist_weight (float): Weight for Euclidean distance loss (not used in the code).
+        pixel_weight (float): Weight for pixel-wise loss.
+        mtcnn_weight (float): Weight for MTCNN-based loss (not used in the code).
+        regularize_mag_weight (float): Weight for latent magnitude regularization.
+        dist_weight (float): Weight for VGG-based feature distance loss.
+        regularize_noise_weight (float): Weight for noise regularization.
+        verbose (bool): If True, prints progress messages.
+        vgg_weights (str): Path to VGG16 weights.
+        output_name (str): Name for output files.
+        device (torch.device): Torch device to use (e.g., 'cuda' or 'cpu').
+
+    Returns:
+        None
+    """
+
+    # Validate target image shape
+    assert target.shape == (G.img_channels, G.img_resolution, G.img_resolution), \
+        "Target image dimensions do not match the generator output resolution."
+
+    def logprint(*args):
+        if verbose:
+            print(*args)
+
+
+
+    return
