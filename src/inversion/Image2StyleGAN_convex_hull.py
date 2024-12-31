@@ -255,3 +255,62 @@ def project(
     np.save(output_name + '.npy', w_opt.detach().cpu().numpy())
 
     return
+
+
+def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
+    """
+    Perform image projection using a pre-trained StyleGAN generator.
+
+    Args:
+        network_pkl (str): Path to the pre-trained generator network pickle file.
+        num_steps (int): Number of optimization steps for projection.
+        input_image (str): Path to the input image for projection.
+        output_dir (str): Directory where the output files will be saved.
+        seed (int): Random seed for reproducibility (default: 303).
+
+    Returns:
+        None
+    """
+    # Set random seed for reproducibility
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+    # Prepare input image and output directory
+    image = input_image
+    output_dir = output_dir + "/"
+
+    # Load the generator network
+    with dnnlib.util.open_url(network_pkl) as fp:
+        print(f'Loading networks from "{network_pkl}"...')
+        G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device)  # type: ignore
+
+    print(f'Embedding {image}')
+    name = image.split("/")[-1].split(".")[0]
+
+    # Align the target image using a landmark detector
+    target_pil = align_image(image, landmark_detector)  # Align and preprocess the input image
+
+    # Save the aligned image
+    target_pil.save(output_dir + name + '_aligned.png')
+
+    # Convert the aligned image to a NumPy array
+    target_uint8 = np.array(target_pil, dtype=np.uint8)
+
+    # Optimize the projection
+    start_time = perf_counter()
+    projected_w_steps = project(
+        G,
+        target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device),  # Convert image to tensor
+        num_steps=num_steps,
+        device=device,
+        verbose=True,
+        vgg_weights='weights/vgg16.pt',
+        initial_learning_rate=0.1,
+        regularize_mag_weight=0.1,
+        mtcnn_weight=0.0001,  # Reduced weight for MTCNN-based loss
+        pixel_weight=0.05,  # Increased weight for pixel-wise loss
+        output_name=output_dir + name
+    )
+
+    # Print elapsed time
+    print(f'Elapsed: {(perf_counter() - start_time):.1f} s')
