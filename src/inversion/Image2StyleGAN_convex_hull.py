@@ -244,5 +244,14 @@ def project(
                 else:
                     buf -= buf.mean()
                     buf *= buf.square().mean().rsqrt()
+    # Generate final image
+    with torch.no_grad():
+        synth_images = G.synthesis(w_opt, noise_mode='const')
+        synth_images = (synth_images + 1) * (255 / 2)
+        synth_image = synth_images.permute(0, 2, 3, 1).clamp(0, 255).to(torch.uint8)[0].cpu().numpy()
+
+    # Save results
+    Image.fromarray(synth_image, 'RGB').save(output_name + '.png')
+    np.save(output_name + '.npy', w_opt.detach().cpu().numpy())
 
     return
