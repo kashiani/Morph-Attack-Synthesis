@@ -135,3 +135,55 @@ def get_pasted_masks(file1, file2, output_dir, size=(1024, 1024)):
 
     except Exception as e:
         print("Error Warping", file1, file2, ":", str(e))
+
+def get_masks(file1, file2, output_dir):
+    """
+    Generate and save face masks by morphing two input images.
+
+    Args:
+        file1 (str): Path to the first input image.
+        file2 (str): Path to the second input image.
+        output_dir (str): Directory to save the output masks.
+
+    Returns:
+        None
+    """
+    # Load the input images
+    source_face = cv2.imread(file1)
+    dest_face = cv2.imread(file2)
+
+    # Get dimensions of the source image
+    W, H, D = source_face.shape
+
+    try:
+        # Perform morphing to generate masks
+        left, right = morpher(
+            None,  # Placeholder for additional arguments (if any)
+            list_imgpaths(None, file1, file2),  # Generate list of image paths
+            source_face,  # Source face image
+            dest_face,    # Destination face image
+            int(H),       # Height of the image
+            int(W),       # Width of the image
+            0, 0,         # Placeholder values for additional arguments (if any)
+            "nothing", None, None, "average", get_masks=True
+        )
+
+        # Check if the returned masks are valid arrays
+        if isinstance(left, np.ndarray):
+            # Extract filenames (without extensions) for saving
+            first = file1.split("/")[-1].split(".")[0]
+            second = file2.split("/")[-1].split(".")[0]
+
+            # Save the generated masks
+            cv2.imwrite(os.path.join(output_dir, f"{first}_{second}.png"), left)
+            cv2.imwrite(os.path.join(output_dir, f"{second}_{first}.png"), right)
+
+            # Print confirmation messages
+            print("Saved:", os.path.join(output_dir, f"{first}_{second}.png"))
+            print("Saved:", os.path.join(output_dir, f"{second}_{first}.png"))
+
+    except Exception as e:
+        # Handle exceptions and print error message
+        print("Error Warping", file1, file2)
+        print("Exception:", e)
+
