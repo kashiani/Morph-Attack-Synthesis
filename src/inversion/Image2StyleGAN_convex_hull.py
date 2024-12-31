@@ -140,7 +140,7 @@ def project(
     def logprint(*args):
         if verbose:
             print(*args)
-            
+
     # Prepare the generator
     G = copy.deepcopy(G).eval().requires_grad_(False).to(device)
 
@@ -161,5 +161,24 @@ def project(
     with dnnlib.util.open_url(vgg_weights) as f:
         vgg16 = torch.jit.load(f).eval().to(device)
 
+    # Extract features for the target image
+    target_images = target.unsqueeze(0).to(device).to(torch.float32)
+    if target_images.shape[2] > 256:
+        target_images = F.interpolate(target_images, size=(256, 256), mode='area')
+    target_features = vgg16(target_images, resize_images=False, return_lpips=True)
+
+    # Initialize latent variables
+    w_opt = torch.tensor(w_avg.repeat(18, 1), dtype=torch.float32, device=device, requires_grad=True)
+    w_out = torch.zeros([0] + list(w_opt.shape[1:]), dtype=torch.float32, device=device)
+
+    # Setup optimizer
+    optimizer = torch.optim.Adam([w_opt] + list(noise_bufs.values()), betas=(0.9, 0.999), lr=initial_learning_rate)
+
+    pixelwise_loss = torch.nn.L1Loss()
+
+    # Initialize noise buffers
+    for buf in noise_bufs.values():
+        buf[:] = torch.randn_like(buf)
+        buf.requires_grad = True
 
     return
