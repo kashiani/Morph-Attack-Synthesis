@@ -140,7 +140,26 @@ def project(
     def logprint(*args):
         if verbose:
             print(*args)
+            
+    # Prepare the generator
+    G = copy.deepcopy(G).eval().requires_grad_(False).to(device)
 
+    # Compute W midpoint and standard deviation
+    logprint(f'Computing W midpoint and stddev using {w_avg_samples} samples...')
+    z_samples = np.random.RandomState(123).randn(w_avg_samples, G.z_dim)
+    w_samples = G.mapping(torch.from_numpy(z_samples).to(device), None)  # [N, L, C]
+    w_samples = w_samples[:, :1, :].cpu().numpy().astype(np.float32)      # [N, 1, C]
+    w_avg = np.mean(w_samples, axis=0, keepdims=True)  # [1, 1, C]
+    w_std = (np.sum((w_samples - w_avg) ** 2) / w_avg_samples) ** 0.5
+
+    # Initialize noise buffers
+    noise_bufs = {name: buf for (name, buf) in G.synthesis.named_buffers() if 'noise_const' in name}
+
+    # Load VGG16 feature detector
+    if vgg_weights is not None:
+        vgg_weights = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
+    with dnnlib.util.open_url(vgg_weights) as f:
+        vgg16 = torch.jit.load(f).eval().to(device)
 
 
     return
