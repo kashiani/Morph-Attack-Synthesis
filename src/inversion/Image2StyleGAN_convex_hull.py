@@ -181,4 +181,68 @@ def project(
         buf[:] = torch.randn_like(buf)
         buf.requires_grad = True
 
+    # Optimization loop
+    for step in range(num_steps):
+        # Learning rate schedule
+        t = step / num_steps
+        w_noise_scale = w_std * initial_noise_factor * max(0.0, 1.0 - t / noise_ramp_length) ** 2
+        lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
+        lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
+        lr_ramp *= min(1.0, t / lr_rampup_length)
+        lr = initial_learning_rate * lr_ramp
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
+
+        # Synthesize images from latent variables
+        w_noise = torch.randn_like(w_opt) * w_noise_scale
+        ws = w_opt + w_noise
+        synth_images = G.synthesis(ws, noise_mode='const')
+        synth_images = (synth_images + 1) * (255 / 2)
+
+        # Compute pixel-wise loss
+        pixel_loss = pixelwise_loss(target_images, synth_images.clamp(0, 255))
+
+        # Downsample synthesized images if necessary
+        if synth_images.shape[2] > 256:
+            synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
+
+        # Compute VGG feature distance
+        synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
+        dist = (target_features - synth_features).square().sum() * dist_weight
+
+        # Compute noise regularization loss
+        reg_loss = 0.0
+        for v in noise_bufs.values():
+            noise = v[None, None, :, :]
+            while True:
+                reg_loss += (noise * torch.roll(noise, shifts=1, dims=3)).mean() ** 2
+                reg_loss += (noise * torch.roll(noise, shifts=1, dims=2)).mean() ** 2
+                if noise.shape[2] <= 8:
+                    break
+                noise = F.avg_pool2d(noise, kernel_size=2)
+
+        # Compute total loss
+        loss = dist + reg_loss * regularize_noise_weight + pixel_loss * pixel_weight
+        if regularize_mag_weight > 0:
+            latent_mag_reg = (torch.mean(torch.square(ws)) ** 0.5)
+            loss += latent_mag_reg * regularize_mag_weight
+
+        # Backpropagation
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+
+        # Print progress
+        logprint(f'Step {step + 1}/{num_steps}: Loss {loss.item():.4f}')
+
+        # Normalize noise buffers
+        with torch.no_grad():
+            for buf in noise_bufs.values():
+                if step > 400:
+                    buf -= buf.mean()
+                    buf *= buf.square().mean().rsqrt() * 0
+                else:
+                    buf -= buf.mean()
+                    buf *= buf.square().mean().rsqrt()
+
     return
