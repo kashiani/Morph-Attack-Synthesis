@@ -42,5 +42,10 @@ def landmark_inversion(img1: str, img2: str, network_pkl: str, num_steps: int, m
 
     if not os.path.isfile(l2):
         landmark_projection(network_pkl=network_pkl, num_steps=num_steps, input_image=img2, output_dir=embeddings_dir)
-        
+
+
+    # Morph Latents
+    output_name = f"{os.path.splitext(os.path.basename(img1))[0]}_{os.path.splitext(os.path.basename(img2))[0]}_landmark_no_warping"
+    latent_morpher(network_pkl, l1, l2, morph_coeffs, morphed_dir, output_name=output_name)
+
     return
