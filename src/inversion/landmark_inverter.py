@@ -24,4 +24,11 @@ def landmark_inversion(img1: str, img2: str, network_pkl: str, num_steps: int, m
         num_steps (int): Number of optimization steps for inversion.
         output_dir (str): Directory for output files.
     """
+
+    embeddings_dir = os.path.join(output_dir, "embeddings")
+    morphed_dir = os.path.join(output_dir, "morphed")
+
+    # Ensure necessary directories exist
+    make_dir(embeddings_dir)
+    make_dir(morphed_dir)
     return
