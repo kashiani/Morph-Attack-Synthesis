@@ -74,4 +74,15 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
     make_dir(embeddings_dir)
     make_dir(morphed_masks_dir)
 
+    # Generate file paths
+    aligned1 = generate_file_path(aligned_dir, os.path.splitext(os.path.basename(img1))[0], extension=".png")
+    aligned2 = generate_file_path(aligned_dir, os.path.splitext(os.path.basename(img2))[0], extension=".png")
+    warped1 = generate_file_path(warped_dir, os.path.splitext(os.path.basename(img1))[0], os.path.splitext(os.path.basename(img2))[0], extension=".png")
+    warped2 = generate_file_path(warped_dir, os.path.splitext(os.path.basename(img2))[0], os.path.splitext(os.path.basename(img1))[0], extension=".png")
+    l1 = generate_file_path(embeddings_dir, os.path.splitext(os.path.basename(img1))[0], os.path.splitext(os.path.basename(img2))[0], extension=".npy")
+    l2 = generate_file_path(embeddings_dir, os.path.splitext(os.path.basename(img2))[0], os.path.splitext(os.path.basename(img1))[0], extension=".npy")
+    morphed_mask = generate_file_path(morphed_masks_dir, os.path.splitext(os.path.basename(img1))[0], os.path.splitext(os.path.basename(img2))[0], extension=".png")
+
+
+
     return
