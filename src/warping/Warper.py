@@ -135,3 +135,112 @@ def get_pasted_masks(file1, file2, output_dir, size=(1024, 1024)):
 
     except Exception as e:
         print("Error Warping", file1, file2, ":", str(e))
+
+def get_masks(file1, file2, output_dir):
+    """
+    Generate and save face masks by morphing two input images.
+
+    Args:
+        file1 (str): Path to the first input image.
+        file2 (str): Path to the second input image.
+        output_dir (str): Directory to save the output masks.
+
+    Returns:
+        None
+    """
+    # Load the input images
+    source_face = cv2.imread(file1)
+    dest_face = cv2.imread(file2)
+
+    # Get dimensions of the source image
+    W, H, D = source_face.shape
+
+    try:
+        # Perform morphing to generate masks
+        left, right = morpher(
+            None,  # Placeholder for additional arguments (if any)
+            list_imgpaths(None, file1, file2),  # Generate list of image paths
+            source_face,  # Source face image
+            dest_face,    # Destination face image
+            int(H),       # Height of the image
+            int(W),       # Width of the image
+            0, 0,         # Placeholder values for additional arguments (if any)
+            "nothing", None, None, "average", get_masks=True
+        )
+
+        # Check if the returned masks are valid arrays
+        if isinstance(left, np.ndarray):
+            # Extract filenames (without extensions) for saving
+            first = file1.split("/")[-1].split(".")[0]
+            second = file2.split("/")[-1].split(".")[0]
+
+            # Save the generated masks
+            cv2.imwrite(os.path.join(output_dir, f"{first}_{second}.png"), left)
+            cv2.imwrite(os.path.join(output_dir, f"{second}_{first}.png"), right)
+
+            # Print confirmation messages
+            print("Saved:", os.path.join(output_dir, f"{first}_{second}.png"))
+            print("Saved:", os.path.join(output_dir, f"{second}_{first}.png"))
+
+    except Exception as e:
+        # Handle exceptions and print error message
+        print("Error Warping", file1, file2)
+        print("Exception:", e)
+
+
+def paste_images(o1, o2, m, output_1, output_2, size=(1024, 1024)):
+    """
+    Paste masks onto background images using seamless cloning.
+
+    Args:
+        o1 (str): Path to the first background image.
+        o2 (str): Path to the second background image.
+        m (str): Path to the mask image.
+        output_1 (str): Path to save the first output image.
+        output_2 (str): Path to save the second output image.
+        size (tuple): Target size for all images (default: (1024, 1024)).
+
+    Returns:
+        None
+    """
+    # Load images and corresponding points
+    morph, morph_points = load_image_points(m, size)
+    original_1, original1_points = load_image_points(o1, size)
+    original_2, original2_points = load_image_points(o2, size)
+
+    # Ensure all images and points are loaded successfully
+    if all(
+        x is not None for x in [original_1, original_2, original1_points, original2_points, morph, morph_points]
+    ):
+        # Compute canonical points by averaging points from both images
+        points = locator.weighted_average_points(original2_points, original1_points, 0.5)
+
+        # Warp the first original image
+        original_1_warped = warper.warp_image(original_1, original1_points, points, size)
+
+        # Extract mask and calculate the center of the region for cloning
+        temp_points = points[:-4]
+        mask = blender.mask_from_points(size, temp_points)
+        r = cv2.boundingRect(mask)
+        center = (r[0] + r[2] // 2, r[1] + r[3] // 2)
+
+        # Perform seamless cloning for the first image
+        if isinstance(original_1_warped, (list, np.ndarray)) and isinstance(morph, (list, np.ndarray)):
+            new_image_1 = cv2.seamlessClone(morph, original_1_warped, mask, center, cv2.NORMAL_CLONE)
+            cv2.imwrite(output_1, new_image_1)
+
+        # Warp the second original image
+        original_2_warped = warper.warp_image(original_2, original2_points, points, size)
+
+        # Reuse mask and center for the second image
+        mask = blender.mask_from_points(size, temp_points)
+        r = cv2.boundingRect(mask)
+        center = (r[0] + r[2] // 2, r[1] + r[3] // 2)
+
+        # Perform seamless cloning for the second image
+        if isinstance(original_2_warped, (list, np.ndarray)) and isinstance(morph, (list, np.ndarray)):
+            new_image_2 = cv2.seamlessClone(morph, original_2_warped, mask, center, cv2.NORMAL_CLONE)
+            cv2.imwrite(output_2, new_image_2)
+
+        # Print confirmation of output creation
+        print("Made:", output_1, output_2)
