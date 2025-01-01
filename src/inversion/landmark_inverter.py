@@ -83,6 +83,11 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
     l2 = generate_file_path(embeddings_dir, os.path.splitext(os.path.basename(img2))[0], os.path.splitext(os.path.basename(img1))[0], extension=".npy")
     morphed_mask = generate_file_path(morphed_masks_dir, os.path.splitext(os.path.basename(img1))[0], os.path.splitext(os.path.basename(img2))[0], extension=".png")
 
+    # Align images if not already aligned
+    if not os.path.isfile(aligned1):
+        align_image(img1, landmark_detector).save(aligned1)
+    if not os.path.isfile(aligned2):
+        align_image(img2, landmark_detector).save(aligned2)
 
 
     return
