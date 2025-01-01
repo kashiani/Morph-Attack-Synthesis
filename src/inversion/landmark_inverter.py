@@ -31,4 +31,16 @@ def landmark_inversion(img1: str, img2: str, network_pkl: str, num_steps: int, m
     # Ensure necessary directories exist
     make_dir(embeddings_dir)
     make_dir(morphed_dir)
+
+    # Generate file paths
+    l1 = generate_file_path(embeddings_dir, os.path.splitext(os.path.basename(img1))[0], extension=".npy")
+    l2 = generate_file_path(embeddings_dir, os.path.splitext(os.path.basename(img2))[0], extension=".npy")
+
+    # Perform landmark-based inversion
+    if not os.path.isfile(l1):
+        landmark_projection(network_pkl=network_pkl, num_steps=num_steps, input_image=img1, output_dir=embeddings_dir)
+
+    if not os.path.isfile(l2):
+        landmark_projection(network_pkl=network_pkl, num_steps=num_steps, input_image=img2, output_dir=embeddings_dir)
+        
     return
