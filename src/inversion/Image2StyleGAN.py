@@ -28,6 +28,7 @@ import legacy
 from src.utils import align_image
 from src.morphing import VGG16_perceptual
 from ffhq_dataset.landmarks_detector import LandmarksDetector
+from src import dnnlib
 
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -156,7 +157,7 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
 
     image = input_image
     output_dir = output_dir + "/"
-    with src.dnnlib.util.open_url(network_pkl) as fp:
+    with dnnlib.util.open_url(network_pkl) as fp:
         # Load networks.
         print('Loading networks from "%s"...' % network_pkl)
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
@@ -203,7 +204,7 @@ def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str
 
     image = input_image
     output_dir = output_dir + "/"
-    with src.dnnlib.util.open_url(network_pkl) as fp:
+    with dnnlib.util.open_url(network_pkl) as fp:
         # Load networks.
         print('Loading networks from "%s"...' % network_pkl)
         G = legacy.load_network_pkl(fp)['G_ema'].requires_grad_(False).to(device) # type: ignore
