@@ -89,5 +89,9 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
     if not os.path.isfile(aligned2):
         align_image(img2, landmark_detector).save(aligned2)
 
+    # Generate warped masks if not already warped
+    if not os.path.isfile(warped1) and not os.path.isfile(warped2):
+        get_masks(aligned1, aligned2, warped_dir)
+
 
     return
