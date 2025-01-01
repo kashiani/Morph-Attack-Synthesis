@@ -99,5 +99,7 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
     if not os.path.isfile(l2):
         landmark_projection(network_pkl=network_pkl, num_steps=num_steps, input_image=warped2, output_dir=embeddings_dir)
 
+    latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir + "/morphed_masks")
+
 
     return
