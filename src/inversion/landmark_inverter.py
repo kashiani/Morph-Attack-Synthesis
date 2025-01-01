@@ -63,4 +63,9 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
         output_dir (str): Directory for output files.
     """
 
+    aligned_dir = os.path.join(output_dir, "aligned")
+    warped_dir = os.path.join(output_dir, "warped")
+    embeddings_dir = os.path.join(output_dir, "embeddings")
+    morphed_masks_dir = os.path.join(output_dir, "morphed_masks")
+
     return
