@@ -68,4 +68,10 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
     embeddings_dir = os.path.join(output_dir, "embeddings")
     morphed_masks_dir = os.path.join(output_dir, "morphed_masks")
 
+    # Ensure necessary directories exist
+    make_dir(aligned_dir)
+    make_dir(warped_dir)
+    make_dir(embeddings_dir)
+    make_dir(morphed_masks_dir)
+
     return
