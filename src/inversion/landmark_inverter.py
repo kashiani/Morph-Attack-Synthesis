@@ -101,5 +101,8 @@ def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps
 
     latent_morpher(network_pkl, l1, l2, morph_coeffs, output_dir + "/morphed_masks")
 
+    # Paste Morphed Mask
+    paste_images(aligned1, aligned2, morphed_mask,
+                 warped1.replace("warped", "morphed"),
+                 warped2.replace("warped", "morphed"))
 
-    return
