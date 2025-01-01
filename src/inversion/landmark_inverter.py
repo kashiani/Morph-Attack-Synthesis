@@ -49,3 +49,18 @@ def landmark_inversion(img1: str, img2: str, network_pkl: str, num_steps: int, m
     latent_morpher(network_pkl, l1, l2, morph_coeffs, morphed_dir, output_name=output_name)
 
     return
+
+
+def landmark_inversion_warping(img1: str, img2: str, network_pkl: str, num_steps: int, morph_coeffs: list, output_dir: str):
+    """
+    Warps landmarks, performs landmark-based inversion, and morphs the latents.
+
+    Args:
+        img1 (str): Path to the first image.
+        img2 (str): Path to the second image.
+        network_pkl (str): Path to the StyleGAN model weights.
+        num_steps (int): Number of optimization steps for inversion.
+        output_dir (str): Directory for output files.
+    """
+
+    return
