@@ -84,7 +84,7 @@ def main():
     parser = argparse.ArgumentParser(description="StyleGAN Morphing Tool")
 
     # Command-line arguments
-    parser.add_argument('--list', type=str, default="./examples/morph_pairs.txt", help="Path to the list of morph pairs.")
+    parser.add_argument('--list', type=str, default="../examples/morph_pairs.txt", help="Path to the list of morph pairs.")
     parser.add_argument('--method', type=str, choices=["StyleGAN", "OpenCV", "FaceMorpher"], default="StyleGAN",
                         help="Morph synthesis method to use.")
     parser.add_argument('--inversion', type=str, choices=["I2S", "Landmark"], default="I2S", help="Inversion method to use.")
@@ -95,6 +95,7 @@ def main():
     parser.add_argument('--output_dir', type=str, default="output", help="Directory for all generated data.")
 
     args = parser.parse_args()
+
 
     # Suppress specific warnings
     warnings.filterwarnings("ignore", message="Failed to build CUDA kernels for upfirdn2d")
