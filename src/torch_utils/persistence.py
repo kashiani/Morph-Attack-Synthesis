@@ -148,3 +148,20 @@ def _reconstruct_persistent_obj(meta):
     else:
         obj.__dict__.update(meta.state)
     return obj
+
+def _module_to_src(module):
+    """
+    Retrieve the source code of a Python module.
+
+    Args:
+        module: Python module.
+
+    Returns:
+        str: Source code of the module.
+    """
+    src = _module_to_src_dict.get(module, None)
+    if src is None:
+        src = inspect.getsource(module)
+        _module_to_src_dict[module] = src
+        _src_to_module_dict[src] = module
+    return src
