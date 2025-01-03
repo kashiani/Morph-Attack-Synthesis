@@ -197,6 +197,7 @@ def projection(network_pkl, num_steps, input_image, output_dir, seed=303):
 @click.option('--input_image',            help='Image to Invert', type=str, default="input/04203d523.jpg")
 @click.option('--output_dir',             help='Output Folder for Latent and Reconstructed Image', type=str, default="output")
 
+
 def run_projection(network_pkl: str, seed: int, num_steps: int, input_image: str, output_dir: str):
 
     np.random.seed(seed)

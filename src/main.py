@@ -96,6 +96,7 @@ def main():
 
     args = parser.parse_args()
 
+
     # Suppress specific warnings
     warnings.filterwarnings("ignore", message="Failed to build CUDA kernels for upfirdn2d")
     warnings.filterwarnings("ignore", category=UserWarning)
