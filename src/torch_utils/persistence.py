@@ -116,3 +116,35 @@ def import_hook(hook):
     """
     assert callable(hook)
     _import_hooks.append(hook)
+
+def _reconstruct_persistent_obj(meta):
+    """
+    Reconstruct a persistent object during unpickling.
+
+    Args:
+        meta (dict): Metadata containing information about the object.
+
+    Returns:
+        object: Reconstructed object.
+    """
+    meta = dnnlib.EasyDict(meta)
+    meta.state = dnnlib.EasyDict(meta.state)
+
+    for hook in _import_hooks:
+        meta = hook(meta)
+        assert meta is not None
+
+    assert meta.version == _version
+    module = _src_to_module(meta.module_src)
+
+    assert meta.type == 'class'
+    orig_class = module.__dict__[meta.class_name]
+    decorator_class = persistent_class(orig_class)
+    obj = decorator_class.__new__(decorator_class)
+
+    setstate = getattr(obj, '__setstate__', None)
+    if callable(setstate):
+        setstate(meta.state)
+    else:
+        obj.__dict__.update(meta.state)
+    return obj
