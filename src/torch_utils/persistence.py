@@ -89,3 +89,20 @@ def persistent_class(orig_class):
     Decorator.__name__ = orig_class.__name__
     _decorators.add(Decorator)
     return Decorator
+
+def is_persistent(obj):
+    """
+    Check if an object or class is persistent.
+
+    Args:
+        obj: Object or class to check.
+
+    Returns:
+        bool: True if the object or class is persistent, False otherwise.
+    """
+    try:
+        if obj in _decorators:
+            return True
+    except TypeError:
+        pass
+    return type(obj) in _decorators
