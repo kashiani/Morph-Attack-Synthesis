@@ -106,3 +106,13 @@ def is_persistent(obj):
     except TypeError:
         pass
     return type(obj) in _decorators
+
+def import_hook(hook):
+    """
+    Register an import hook to modify pickled source code during unpickling.
+
+    Args:
+        hook (callable): Function to be called during unpickling.
+    """
+    assert callable(hook)
+    _import_hooks.append(hook)
