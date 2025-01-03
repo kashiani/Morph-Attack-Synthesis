@@ -185,3 +185,28 @@ def _src_to_module(src):
         _src_to_module_dict[src] = module
         exec(src, module.__dict__)
     return module
+
+def _check_pickleable(obj):
+    """
+    Ensure that an object is pickleable, raising an error if not.
+
+    Args:
+        obj: Object to check.
+
+    Raises:
+        Exception: If the object is not pickleable.
+    """
+    def recurse(obj):
+        if isinstance(obj, (list, tuple, set)):
+            return [recurse(x) for x in obj]
+        if isinstance(obj, dict):
+            return [[recurse(x), recurse(y)] for x, y in obj.items()]
+        if isinstance(obj, (str, int, float, bool, bytes, bytearray)):
+            return None
+        if f'{type(obj).__module__}.{type(obj).__name__}' in ['numpy.ndarray', 'torch.Tensor']:
+            return None
+        if is_persistent(obj):
+            return None
+        return obj
+    with io.BytesIO() as f:
+        pickle.dump(recurse(obj), f)
