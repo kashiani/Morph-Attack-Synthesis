@@ -165,3 +165,23 @@ def _module_to_src(module):
         _module_to_src_dict[module] = src
         _src_to_module_dict[src] = module
     return src
+
+def _src_to_module(src):
+    """
+    Create or retrieve a Python module for a given source code.
+
+    Args:
+        src (str): Source code of the module.
+
+    Returns:
+        module: Python module object.
+    """
+    module = _src_to_module_dict.get(src, None)
+    if module is None:
+        module_name = "_imported_module_" + uuid.uuid4().hex
+        module = types.ModuleType(module_name)
+        sys.modules[module_name] = module
+        _module_to_src_dict[module] = src
+        _src_to_module_dict[src] = module
+        exec(src, module.__dict__)
+    return module
